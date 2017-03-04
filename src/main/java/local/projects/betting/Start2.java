@@ -47,7 +47,7 @@ public class Start2 {
   
   public static void main(String[] args) {
     Start2 s = new Start2();
-    s.setFileName("E:/betting/Scommesse.xlsx");
+    s.setFileName("C:/git/betting/Scommesse.xlsx");
     s.setSheetName("Risultati");
     
     // Getting DataEntry and DataPersist instance to extract Odds and

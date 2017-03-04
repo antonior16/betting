@@ -29,7 +29,6 @@ import local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum
 import local.projects.betting.model.League;
 import local.projects.betting.model.Odds;
 import local.projects.betting.model.Result;
-import local.projects.betting.model.Score;
 import local.projects.betting.model.Team;
 
 /**
@@ -50,17 +49,17 @@ public class App {
   private static final String SCORES_URL = "https://ls.sir.sportradar.com/snaiit";
   
   // Populate Excel Constants
-  private static final String FILE_NAME = "E:/betting/Scommesse.xlsx";
+  private static final String FILE_NAME = "C:/git/betting/Scommesse.xlsx";
   private static final String OddsS_SHEET = "Quote";
   private static final String SCORES_SHEET = "Risultati";
   
   // WEB Drivers Paths
   private static final String CHROME_DRIVER = "/Users/antonio/Desktop/chromedriver/chromedriver.exe";
   private static final String PHANTHOMJS_DRIVER =
-      "E:/betting/src/main/resources/phantomjs-2.1.1-windows/bin/phantomjs.exe";
+      "src/main/resources/phantomjs-2.1.1-windows/bin/phantomjs.exe";
   
   public App(WebDriverEnum webDriver) {
-    setWebDriver(0, 0, WebDriverEnum.PHANTOMJS);
+    setWebDriver(0, 0, webDriver);
     leagues = new ArrayList<League>();
     
   }
@@ -69,9 +68,9 @@ public class App {
     LOGGER.info("Hello World!");
     App a = new App(WebDriverEnum.PHANTOMJS);
     try {
-      // a.extractOddss();
+      a.extractOddss();
       
-      a.extractScores();
+      // a.extractScores();
       
       // a.populateExcel();
       // Close the browser
@@ -117,7 +116,7 @@ public class App {
     switch (webDriver) {
       case CHROME:
         path = CHROME_DRIVER;
-        System.setProperty("webdriver.chrome.driver", path);
+        System.setProperty("webdriver.chrome.driver", CHROME_DRIVER);
         driver = new ChromeDriver();
         break;
       case PHANTOMJS: // DesiredCapabilities caps = DesiredCapabilities.phantomjs();
@@ -132,6 +131,9 @@ public class App {
   
   private void scrapeOddss() throws FileNotFoundException, IOException {
     // simplified: find table which contains the keyword
+    driver.findElement(By.linkText("calcio"));
+//    driver.findElement(By.cssSelector("#CALCIO_0 > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)")).click();
+     driver.findElement(By.xpath("id('CALCIO_0')/x:div/x:div[1]/x:a[1]")).click();
     WebElement tableElement = driver.findElement(By.xpath(".//table"));
     
     // create empty table object and iterate through all rows of the found table element
@@ -321,26 +323,26 @@ public class App {
   
   private void populateLeagues() {
     // Creating Leagues
-    League serieA = new League("Serie A", "https://www.snai.it/sport/CALCIO/SERIE%20A");
-    League serieB = new League("Serie B", "https://www.snai.it/sport/CALCIO/SERIE%20B");
-    League liga = new League("Liga", "https://www.snai.it/sport/CALCIO/LIGA%20SPAGNOLA");
-    League ligue1 = new League("Ligue 1", "https://www.snai.it/sport/CALCIO/LIGUE%201");
-    League premierLeague = new League("Premier League", "https://www.snai.it/sport/CALCIO/PREMIER%20LEAGUE");
-    League bundesliga = new League("Bundesliga", "https://www.snai.it/sport/CALCIO/BUNDESLIGA");
-    League olanda1 = new League("Olanda", "https://www.snai.it/sport/CALCIO/OLANDA%201");
-    League germania2 = new League("Germania 2", "https://www.snai.it/sport/CALCIO/GERMANIA%202");
-    League ligue2 = new League("Ligue 2", "https://www.snai.it/sport/CALCIO/FRANCIA%202");
-    League portogallo1 = new League("Portogallo", "https://www.snai.it/sport/CALCIO/PORTOGALLO%201");
-    
+    League serieA = new League("Serie A", "https://www.snai.it/sport");
+    // League serieB = new League("Serie B", "https://www.snai.it/sport/CALCIO/SERIE%20B");
+    // League liga = new League("Liga", "https://www.snai.it/sport/CALCIO/LIGA%20SPAGNOLA");
+    // League ligue1 = new League("Ligue 1", "https://www.snai.it/sport/CALCIO/LIGUE%201");
+    // League premierLeague = new League("Premier League", "https://www.snai.it/sport/CALCIO/PREMIER%20LEAGUE");
+    // League bundesliga = new League("Bundesliga", "https://www.snai.it/sport/CALCIO/BUNDESLIGA");
+    // League olanda1 = new League("Olanda", "https://www.snai.it/sport/CALCIO/OLANDA%201");
+    // League germania2 = new League("Germania 2", "https://www.snai.it/sport/CALCIO/GERMANIA%202");
+    // League ligue2 = new League("Ligue 2", "https://www.snai.it/sport/CALCIO/FRANCIA%202");
+    // League portogallo1 = new League("Portogallo", "https://www.snai.it/sport/CALCIO/PORTOGALLO%201");
+    //
     leagues.add(serieA);
-    leagues.add(serieB);
-    leagues.add(liga);
-    leagues.add(ligue1);
-    leagues.add(premierLeague);
-    leagues.add(bundesliga);
-    leagues.add(olanda1);
-    leagues.add(germania2);
-    leagues.add(ligue2);
-    leagues.add(portogallo1);
+    // leagues.add(serieB);
+    // leagues.add(liga);
+    // leagues.add(ligue1);
+    // leagues.add(premierLeague);
+    // leagues.add(bundesliga);
+    // leagues.add(olanda1);
+    // leagues.add(germania2);
+    // leagues.add(ligue2);
+    // leagues.add(portogallo1);
   }
 }
