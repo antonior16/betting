@@ -7,6 +7,7 @@ import local.projects.betting.model.Odds;
 import local.projects.betting.model.Result;
 
 public interface DataPersist {
+  
 	void persistFixtures(Map<Integer, Fixture> fixtures);
 
 	void persistOdds(Map<Integer, Odds> odds);

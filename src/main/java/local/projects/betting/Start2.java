@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import local.projects.betting.api.DataEntry;
 import local.projects.betting.api.DataPersist;
 import local.projects.betting.data.entry.api.football.impl.ApiFootballDataEntryImpl;
-import local.projects.betting.data.entry.snai.impl.SnaiOddsDataEntryImpl;
+import local.projects.betting.data.entry.api.football.model.Fixture;
 import local.projects.betting.data.persist.excel.impl.ExcelDataPersistImpl;
 import local.projects.betting.model.Odds;
 import local.projects.betting.model.Result;
@@ -19,22 +19,25 @@ import local.projects.betting.model.Result;
 public class Start2 {
   
   private static final Logger LOGGER = LoggerFactory.getLogger(Start2.class);
-  private String fileName;
-  private String sheetName;
+  private String excelPath = "C:/git/betting/Scommesse.xlsx";
+  private String excelSheetName;
   
-  public String getFileName() {
-    return fileName;
+  public Start2() {
   }
   
-  public void setFileName(String fileName) {
-    this.fileName = fileName;
+  public String getExcelPath() {
+    return excelPath;
+  }
+  
+  public void setExcelPath(String excelPath) {
+    this.excelPath = excelPath;
   }
   
   /**
    * @return the sheetName
    */
-  public String getSheetName() {
-    return sheetName;
+  public String getExcelSheetName() {
+    return excelSheetName;
   }
   
   /**
@@ -42,31 +45,63 @@ public class Start2 {
    *          the sheetName to set
    */
   public void setSheetName(String sheetName) {
-    this.sheetName = sheetName;
+    this.excelSheetName = sheetName;
   }
   
   public static void main(String[] args) {
     Start2 s = new Start2();
-    s.setFileName("C:/git/betting/Scommesse.xlsx");
     s.setSheetName("Risultati");
-    
-    // Getting DataEntry and DataPersist instance to extract Odds and
-    // Fixtures
-    DataEntry dataEntry = new SnaiOddsDataEntryImpl();
-    DataPersist dataPersistResults = new ExcelDataPersistImpl(s.getFileName(), s.getSheetName());
-    
-    Map<Integer, Result> scores = dataEntry.extractResults("p2");
-    
-    if (scores != null && !scores.isEmpty()) {
-      dataPersistResults.persistResults(scores);
-    }
+    s.extractResults("p1", DataPersistProviderEnum.EXCEL);
     
     s.setSheetName("Quote");
-    DataPersist dataPersistOdds = new ExcelDataPersistImpl(s.getFileName(), s.getSheetName());
+    s.extractOdds(DataPersistProviderEnum.EXCEL);
     
+    s.setSheetName("Fixtures");
+    s.extractFixtures("p1", DataPersistProviderEnum.EXCEL);
+  }
+  
+  private void extractFixtures(String timeFrame, DataPersistProviderEnum dataPersistProvider) {
+    // DataEntry dataEntry = new ApiFootballDataEntryImpl();
+    Map<Integer, Fixture> scores = new ApiFootballDataEntryImpl().extractFixtures(timeFrame);
+    
+    if (scores != null && !scores.isEmpty()) {
+      DataPersist dataPersist = getDataPersistProvider(dataPersistProvider);
+      dataPersist.persistFixtures(scores);
+    }
+  }
+  
+  /**
+   * @param s
+   */
+  private void extractOdds(DataPersistProviderEnum dataPersistProvider) {
+    DataEntry dataEntry = new ApiFootballDataEntryImpl();
     Map<Integer, Odds> extractOdds = dataEntry.extractOdds();
     if (extractOdds != null && !extractOdds.isEmpty()) {
-      dataPersistOdds.persistOdds(extractOdds);
+      DataPersist dataPersist = getDataPersistProvider(dataPersistProvider);
+      dataPersist.persistOdds(extractOdds);
     }
+  }
+  
+  private void extractResults(String timeFrame, DataPersistProviderEnum dataPersistProvider) {
+    DataEntry dataEntry = new ApiFootballDataEntryImpl();
+    Map<Integer, Result> scores = dataEntry.extractResults(timeFrame);
+    
+    if (scores != null && !scores.isEmpty()) {
+      DataPersist dataPersist = getDataPersistProvider(dataPersistProvider);
+      dataPersist.persistResults(scores);
+    }
+  }
+  
+  /**
+   * @return
+   */
+  private DataPersist getDataPersistProvider(DataPersistProviderEnum dataPersistProvider) {
+    DataPersist dataPersist = null;
+    switch (dataPersistProvider) {
+      case EXCEL:
+        dataPersist = new ExcelDataPersistImpl(getExcelPath(), getExcelSheetName());
+        break;
+    }
+    return dataPersist;
   }
 }

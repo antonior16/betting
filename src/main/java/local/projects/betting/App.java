@@ -17,6 +17,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -46,7 +47,7 @@ public class App {
   private int start = 1;
   
   // Scores datasource
-  private static final String SCORES_URL = "https://ls.sir.sportradar.com/snaiit";
+  private static final String SCORES_URL = "http://www.direttagoal.it/";
   
   // Populate Excel Constants
   private static final String FILE_NAME = "C:/git/betting/Scommesse.xlsx";
@@ -68,13 +69,14 @@ public class App {
     LOGGER.info("Hello World!");
     App a = new App(WebDriverEnum.PHANTOMJS);
     try {
-      a.extractOddss();
+      // a.extractOddss();
       
-      // a.extractScores();
+      a.extractScores();
       
       // a.populateExcel();
       // Close the browser
     } catch (Exception e) {
+      
       LOGGER.info(e.getMessage());
     } finally {
       a.driver.quit();
@@ -131,9 +133,11 @@ public class App {
   
   private void scrapeOddss() throws FileNotFoundException, IOException {
     // simplified: find table which contains the keyword
-    driver.findElement(By.linkText("calcio"));
-//    driver.findElement(By.cssSelector("#CALCIO_0 > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)")).click();
-     driver.findElement(By.xpath("id('CALCIO_0')/x:div/x:div[1]/x:a[1]")).click();
+    driver.findElement(By.linkText("calcio")).click();
+    driver.findElement(By.linkText("OGGI")).click();
+    
+    // driver.findElement(By.cssSelector("#CALCIO_0 > div:nth-child(1) > div:nth-child(1) > a:nth-child(1)")).click();
+    // driver.findElement(By.xpath("id('CALCIO_0')/x:div/x:div[1]/x:a[1]")).click();
     WebElement tableElement = driver.findElement(By.xpath(".//table"));
     
     // create empty table object and iterate through all rows of the found table element
@@ -234,17 +238,22 @@ public class App {
   
   private void scrapeScores() throws FileNotFoundException, IOException {
     // simplified: find table which contains the keyword
+    // selectPhoneType("03-03-2017");
+    //
+    // String xpathExpression =
+    // "id('sr-container')/x:div/x:div[1]/x:div[2]/x:div[2]/x:div[1]/x:div/x:div/x:ul/x:li[2]/x:ul/x:li[6]/x:a";
+    // driver.findElement(By.xpath(xpathExpression)).click();
     WebElement tableElement = driver.findElement(By.xpath(".//tbody"));
     
     List<String> fields = new ArrayList<String>();
     fields.add("time");
-    fields.add("playingTime");
+    // fields.add("playingTime");
     fields.add("home");
     fields.add("score");
     fields.add("away");
     fields.add("live");
-    fields.add("info1");
-    fields.add("info2");
+    // fields.add("info1");
+    // fields.add("info2");
     
     // create empty table object and iterate through all rows of the found table element
     ArrayList<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
@@ -258,6 +267,7 @@ public class App {
       int columnIndex = 0;
       List<WebElement> cellElements = rowElement.findElements(By.xpath(".//td"));
       for (WebElement cellElement : cellElements) {
+         System.out.println(cellElement.getText());
         row.put(fields.get(columnIndex), cellElement);
         columnIndex++;
       }
@@ -265,10 +275,12 @@ public class App {
       userTable.add(row);
     }
     
-    for (int i = 0; i < userTable.size(); i++) {
+    for (int i = 1; i < userTable.size(); i++) {
+      String time = userTable.get(i).get("time").getText();
       Team home = new Team(userTable.get(i).get("home").getText());
-      Team away = new Team(userTable.get(i).get("home").getText());
+      Team away = new Team(userTable.get(i).get("away").getText());
       String score = userTable.get(i).get("score").getText();
+      String live = userTable.get(i).get("live").getText();
       
       Integer goalsHomeTeam = Integer.parseInt(score.substring(0, score.indexOf(":")));
       Integer goalsAwayTeam = Integer.parseInt(score.substring(score.indexOf(":") + 1, score.length()));
@@ -279,6 +291,25 @@ public class App {
       scoreData.put(i + start, new Result(new Date(), home, away, goalsHomeTeam, goalsAwayTeam));
     }
     LOGGER.info("Done");
+  }
+  
+  public void selectPhoneType(String option) {
+    // Open the dropdown so the options are visible
+    // Get all of the options
+    List<WebElement> options = driver.findElements(((By.xpath("//ul//li[contains(.,\"Oggi\")]"))));
+    // Loop through the options and select the one that matches
+    String a = null;
+    for (WebElement opt : options) {
+      a = opt.findElement(By.xpath("//a")).getText();
+      System.out.println(a);
+      //
+      // if ( "OGGI".equals(a)) {
+      // // opt.click();
+      // System.out.println(a);
+      // return;
+      // }
+    }
+    throw new NoSuchElementException("Can't find " + option + " in dropdown");
   }
   
   private void populateScoresSheet() throws FileNotFoundException, IOException {
@@ -323,7 +354,7 @@ public class App {
   
   private void populateLeagues() {
     // Creating Leagues
-    League serieA = new League("Serie A", "https://www.snai.it/sport");
+    League serieA = new League("Serie A", "http://www.direttagoal.it/odds");
     // League serieB = new League("Serie B", "https://www.snai.it/sport/CALCIO/SERIE%20B");
     // League liga = new League("Liga", "https://www.snai.it/sport/CALCIO/LIGA%20SPAGNOLA");
     // League ligue1 = new League("Ligue 1", "https://www.snai.it/sport/CALCIO/LIGUE%201");

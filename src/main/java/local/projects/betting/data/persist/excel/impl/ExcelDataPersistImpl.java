@@ -76,21 +76,32 @@ public class ExcelDataPersistImpl implements DataPersist {
           
           LOGGER.debug(objArr.getHomeTeamName().getName() + " : " + objArr.getAwayTeamName().getName());
           Cell cell = row.createCell(0);
-          cell.setCellValue(objArr.getHomeTeamName().getName());
+          cell.setCellValue(objArr.getDate().toLocaleString());
           
           cell = row.createCell(1);
+          cell.setCellValue(objArr.getHomeTeamName().getName());
+          
+          cell = row.createCell(2);
           cell.setCellValue(objArr.getAwayTeamName().getName());
           
           // Getting Odds
-          if (objArr.getOdds() != null && objArr.getStatus().equals("TIMED")) {
-            cell = row.createCell(2);
-            cell.setCellValue(objArr.getOdds().getHomeWin());
+          if (objArr.getOdds() != null && objArr.getStatus().equals("FINISHED")) {
+            CellStyle cellStyle = workbook.createCellStyle();
+            cellStyle.setDataFormat(
+                workbook.getCreationHelper().createDataFormat().getFormat("#,##0.00"));
             
             cell = row.createCell(3);
-            cell.setCellValue(objArr.getOdds().getDraw());
+            cell.setCellValue(objArr.getOdds().getHomeWin());
+            cell.setCellStyle(cellStyle);
             
             cell = row.createCell(4);
+            cell.setCellValue(objArr.getOdds().getDraw());
+            cell.setCellStyle(cellStyle);
+            
+            cell = row.createCell(5);
             cell.setCellValue(objArr.getOdds().getAwayWin());
+            cell.setCellStyle(cellStyle);
+            
           }
           
           if (objArr.getStatus().equals("FINISHED")) {
@@ -98,10 +109,10 @@ public class ExcelDataPersistImpl implements DataPersist {
             int goalsAwayTeam = objArr.getResult().getGoalsAwayTeam();
             
             // Setting Scores
-            cell = row.createCell(2);
+            cell = row.createCell(6);
             cell.setCellValue(goalsHomeTeam + ":" + goalsAwayTeam);
             
-            cell = row.createCell(3);
+            cell = row.createCell(7);
             
             if (goalsHomeTeam > goalsAwayTeam) {
               cell.setCellValue("1");
@@ -114,7 +125,7 @@ public class ExcelDataPersistImpl implements DataPersist {
             }
             
             // Setting Gol/NoGol
-            cell = row.createCell(4);
+            cell = row.createCell(8);
             if (goalsHomeTeam > 0 & goalsAwayTeam > 0) {
               cell.setCellValue("GOL");
             } else {
@@ -122,7 +133,7 @@ public class ExcelDataPersistImpl implements DataPersist {
             }
             
             // Setting Under/Over
-            cell = row.createCell(5);
+            cell = row.createCell(9);
             if (goalsHomeTeam + goalsAwayTeam >= 3) {
               cell.setCellValue("OVER");
             } else {
@@ -187,7 +198,7 @@ public class ExcelDataPersistImpl implements DataPersist {
               workbook.getCreationHelper().createDataFormat().getFormat("#,##0.00"));
           
           cell = row.createCell(3);
-          cell.setCellValue(objArr.getAwayWin());
+          cell.setCellValue(objArr.getHomeWin());
           cell.setCellStyle(cellStyle);
           
           cell = row.createCell(4);
