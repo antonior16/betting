@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import local.projects.betting.api.DataEntry;
 import local.projects.betting.api.DataPersist;
 import local.projects.betting.data.entry.api.football.impl.ApiFootballDataEntryImpl;
+import local.projects.betting.data.entry.api.football.model.DataPersistProviderEnum;
 import local.projects.betting.data.entry.api.football.model.Fixture;
 import local.projects.betting.data.persist.excel.impl.ExcelDataPersistImpl;
 import local.projects.betting.model.Odds;
