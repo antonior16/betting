@@ -1,0 +1,9 @@
+enum/class	odds provider
+enum/class	html tag
+enum/class	diretta link + campi td
+
+
+agg path a enum
+
+gestione web driver
+			
