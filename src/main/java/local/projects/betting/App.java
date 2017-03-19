@@ -4,10 +4,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -47,11 +50,11 @@ public class App {
   private int start = 1;
   
   // Scores datasource
-  private static final String SCORES_URL = "http://www.diretta.it/";
+  private static final String SCORES_URL = "http://www.diretta.it";
   
   // Populate Excel Constants
   private static final String FILE_NAME = "C:/git/betting/Scommesse.xlsx";
-  private static final String OddsS_SHEET = "Quote";
+  private static final String ODDS_SHEET = "Quote";
   private static final String SCORES_SHEET = "Risultati";
   
   // WEB Drivers Paths
@@ -68,9 +71,9 @@ public class App {
     LOGGER.info("Hello World!");
     App a = new App(WebDriverEnum.PHANTOMJS);
     try {
-      // a.extractOddss();
+//      a.extractOdds();
       
-      a.extractScores();
+       a.extractScores();
       
       // a.populateExcel();
       // Close the browser
@@ -83,7 +86,7 @@ public class App {
     
   }
   
-  public void extractOddss() throws Exception {
+  public void extractOdds() throws Exception {
     data = new TreeMap<Integer, Odds>();
     populateLeagues();
     
@@ -97,7 +100,7 @@ public class App {
     }
     
     if (data != null && !data.isEmpty()) {
-      populateOddssSheet();
+      populateOddsSheet();
     }
   }
   
@@ -133,22 +136,22 @@ public class App {
   
   private void scrapeOddss() throws FileNotFoundException, IOException {
     // simplified: find table which contains the keyword
-    driver.findElement(By.linkText("calcio")).click();
-    driver.findElement(By.linkText("OGGI")).click();
+    // driver.findElement(By.linkText("calcio")).click();
+    // driver.findElement(By.linkText("OGGI")).click();
     
     // driver.findElement(By.cssSelector("#CALCIO_0 > div:nth-child(1) >
     // div:nth-child(1) > a:nth-child(1)")).click();
     // driver.findElement(By.xpath("id('CALCIO_0')/x:div/x:div[1]/x:a[1]")).click();
-    WebElement tableElement = driver.findElement(By.xpath(".//table"));
+    WebElement tableElement = driver.findElement(By.tagName("table"));
     
     // create empty table object and iterate through all rows of the found
     // table element
     ArrayList<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
-    List<WebElement> rowElements = tableElement.findElements(By.xpath(".//tr"));
+    List<WebElement> rowElements = tableElement.findElements(By.tagName("tr"));
     
     // get column names of table from table headers
     ArrayList<String> columnNames = new ArrayList<String>();
-    List<WebElement> headerElements = rowElements.get(0).findElements(By.xpath(".//th"));
+    List<WebElement> headerElements = rowElements.get(0).findElements(By.tagName("th"));
     for (WebElement headerElement : headerElements) {
       columnNames.add(headerElement.getText());
     }
@@ -159,7 +162,7 @@ public class App {
       
       // add table cells to current row
       int columnIndex = 0;
-      List<WebElement> cellElements = rowElement.findElements(By.xpath(".//td"));
+      List<WebElement> cellElements = rowElement.findElements(By.tagName("td"));
       for (WebElement cellElement : cellElements) {
         row.put(columnNames.get(columnIndex), cellElement);
         columnIndex++;
@@ -168,29 +171,40 @@ public class App {
       userTable.add(row);
     }
     
-    for (int i = 1; i < userTable.size(); i++) {
-      String match = userTable.get(i).get("1X2 FINALE,U/O 2,5,GOL NO GOL").getText();
-      Double home = new Double(userTable.get(i).get("1").getText());
-      Double draw = new Double(userTable.get(i).get("X").getText());
-      Double away = new Double(userTable.get(i).get("2").getText());
-      Double under = new Double(userTable.get(i).get("UNDER").getText());
-      Double over = new Double(userTable.get(i).get("OVER").getText());
-      Double gol = new Double(userTable.get(i).get("GOL").getText());
-      Double noGol = new Double(userTable.get(i).get("NOGOL").getText());
-      
-      // Populating Oddss Map to write in data model (e.g excel)
-      data.put(i + start, new Odds(match, home, draw, away, under, over, gol, noGol));
+    NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
+    
+    if (!userTable.isEmpty()) {
+      for (int i = 1; i < userTable.size(); i++) {
+        try {
+          String match = userTable.get(i).get("1X2 FINALE,U/O 2,5,GOL NO GOL").getText();
+          Double home = new Double(format.parse(userTable.get(i).get("1").getText()).doubleValue());
+          Double draw = new Double(format.parse(userTable.get(i).get("X").getText()).doubleValue());
+          Double away = new Double(format.parse(userTable.get(i).get("2").getText()).doubleValue());
+          Double under = new Double(format.parse(userTable.get(i).get("UNDER").getText()).doubleValue());
+          Double over = new Double(format.parse(userTable.get(i).get("OVER").getText()).doubleValue());
+          Double gol = new Double(format.parse(userTable.get(i).get("GOL").getText()).doubleValue());
+          Double noGol = new Double(format.parse(userTable.get(i).get("NOGOL").getText()).doubleValue());
+          
+          Team team1 = new Team(match.substring(6, match.indexOf("-") - 1).trim());
+          Team team2 = new Team(match.substring(match.indexOf("-") + 1, match.length()).trim());
+          
+          // Populating Oddss Map to write in data model (e.g excel)
+          data.put(i, new Odds(team1, team2, home, draw, away, under, over, gol, noGol));
+        } catch (ParseException e) {
+          LOGGER.error("An exception has occured parsing string value ", e);
+        }
+      }
     }
-    LOGGER.info("Done");
+    
   }
   
-  private void populateOddssSheet() throws FileNotFoundException, IOException {
+  private void populateOddsSheet() throws FileNotFoundException, IOException {
     // private void populateExcel() {
     XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(FILE_NAME));
     // int index = workbook.getSheetIndex("Quote");
     // workbook.removeSheetAt(index);
     
-    XSSFSheet sheet = workbook.getSheet(OddsS_SHEET);
+    XSSFSheet sheet = workbook.getSheet(ODDS_SHEET);
     // "Partita", "1", "X", "2", "Under", "Over", "Gol", "No Gol"
     
     // Iterate over data and write to sheet
@@ -239,7 +253,9 @@ public class App {
   }
   
   private void scrapeScores() throws FileNotFoundException, IOException {
-    List<WebElement> livescoreTables = driver.findElements(By.className("soccer"));
+    driver.findElement(By.cssSelector(".yesterday")).click();
+    driver.findElement(By.linkText("Conclusi")).click();
+    List<WebElement> livescoreTables = driver.findElements(By.tagName("table"));
     scoreData = new HashMap<Integer, Result>();
     List<String> fields = new ArrayList<String>();
     fields.add("time");
@@ -254,41 +270,44 @@ public class App {
     // create empty table object and iterate through all rows of the found
     // table element
     ArrayList<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
-    
-    if (!livescoreTables.isEmpty()) {
-      
-      for (WebElement tableElement : livescoreTables) {
-        WebElement tbody = tableElement.findElement(By.xpath(".//tbody"));
+    try {
+      if (!livescoreTables.isEmpty()) {
         
-        List<WebElement> rowElements = tbody.findElements(By.xpath(".//tr"));
-        
-        // iterate through all rows and add their content to table array
-        for (WebElement rowElement : rowElements) {
-          HashMap<String, WebElement> row = new HashMap<String, WebElement>();
+        for (WebElement tableElement : livescoreTables) {
+          WebElement tbody = tableElement.findElement(By.tagName("tbody"));
           
-          // add table cells to current row
-          int columnIndex = 0;
-          List<WebElement> cellElements = rowElement.findElements(By.xpath(".//td"));
-          for (WebElement cellElement : cellElements) {
-            System.out.println("--------->" + fields.get(columnIndex) + " : " + cellElement.getText());
-            row.put(fields.get(columnIndex), cellElement);
-            columnIndex++;
+          List<WebElement> rowElements = tbody.findElements(By.tagName("tr"));
+          
+          // iterate through all rows and add their content to table array
+          for (WebElement rowElement : rowElements) {
+            HashMap<String, WebElement> row = new HashMap<String, WebElement>();
+            
+            // add table cells to current row
+            int columnIndex = 0;
+            List<WebElement> cellElements = rowElement.findElements(By.tagName("td"));
+            for (WebElement cellElement : cellElements) {
+              System.out.println("--------->" + fields.get(columnIndex) + " : " + cellElement.getText());
+              row.put(fields.get(columnIndex), cellElement);
+              columnIndex++;
+            }
+            userTable.add(row);
           }
-          userTable.add(row);
         }
+        
       }
-      
+    } catch (Exception e) {
+      LOGGER.error("" + e);
     }
     
-    for (int i = 1; i < userTable.size(); i++) {
+    for (int i = 0; i < userTable.size(); i++) {
       String score = userTable.get(i).get("score").getText();
-      if (score != null) {
+      if (score != null && "Finale".equalsIgnoreCase(userTable.get(i).get("timer").getText())) {
         String time = userTable.get(i).get("time").getText();
         Team home = new Team(userTable.get(i).get("home").getText());
         Team away = new Team(userTable.get(i).get("away").getText());
         
-        Integer goalsHomeTeam = Integer.parseInt(score.substring(0, score.indexOf(":") - 1));
-        Integer goalsAwayTeam = Integer.parseInt(score.substring(score.indexOf(":") + 2, score.length()));
+        Integer goalsHomeTeam = Integer.parseInt(score.substring(0, score.indexOf("-") - 1));
+        Integer goalsAwayTeam = Integer.parseInt(score.substring(score.indexOf("-") + 2, score.length()));
         scoreData.put(i + start, new Result(new Date(), home, away, goalsHomeTeam, goalsAwayTeam));
         LOGGER.debug(home.getName() + " - " + away.getName() + " score has been added ");
       }
@@ -359,7 +378,7 @@ public class App {
   
   private void populateLeagues() {
     // Creating Leagues
-    League serieA = new League("Serie A", "http://www.direttagoal.it/odds");
+    League serieA = new League("Serie A", "https://www.snai.it/sport/CALCIO/SERIE%20A");
     // League serieB = new League("Serie B",
     // "https://www.snai.it/sport/CALCIO/SERIE%20B");
     // League liga = new League("Liga",

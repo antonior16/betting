@@ -10,6 +10,9 @@ import local.projects.betting.api.DataPersist;
 import local.projects.betting.data.entry.api.football.impl.ApiFootballDataEntryImpl;
 import local.projects.betting.data.entry.api.football.model.DataPersistProviderEnum;
 import local.projects.betting.data.entry.api.football.model.Fixture;
+import local.projects.betting.data.entry.diretta.impl.DirettaScoresDataEntryImpl;
+import local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum;
+import local.projects.betting.data.entry.snai.impl.SnaiOddsDataEntryImpl;
 import local.projects.betting.data.persist.excel.impl.ExcelDataPersistImpl;
 import local.projects.betting.model.Odds;
 import local.projects.betting.model.Result;
@@ -51,14 +54,14 @@ public class Start2 {
   
   public static void main(String[] args) {
     Start2 s = new Start2();
-    s.setSheetName("Risultati");
-    s.extractResults("p1", DataPersistProviderEnum.EXCEL);
+//    s.setSheetName("Risultati");
+//    s.extractResults("p1", DataPersistProviderEnum.EXCEL);
     
     s.setSheetName("Quote");
     s.extractOdds(DataPersistProviderEnum.EXCEL);
-    
-    s.setSheetName("Fixtures");
-    s.extractFixtures("p1", DataPersistProviderEnum.EXCEL);
+//    
+//    s.setSheetName("Fixtures");
+//    s.extractFixtures("p1", DataPersistProviderEnum.EXCEL);
   }
   
   private void extractFixtures(String timeFrame, DataPersistProviderEnum dataPersistProvider) {
@@ -75,7 +78,7 @@ public class Start2 {
    * @param s
    */
   private void extractOdds(DataPersistProviderEnum dataPersistProvider) {
-    DataEntry dataEntry = new ApiFootballDataEntryImpl();
+    DataEntry dataEntry = new SnaiOddsDataEntryImpl(WebDriverEnum.PHANTOMJS);
     Map<Integer, Odds> extractOdds = dataEntry.extractOdds();
     if (extractOdds != null && !extractOdds.isEmpty()) {
       DataPersist dataPersist = getDataPersistProvider(dataPersistProvider);
@@ -84,7 +87,7 @@ public class Start2 {
   }
   
   private void extractResults(String timeFrame, DataPersistProviderEnum dataPersistProvider) {
-    DataEntry dataEntry = new ApiFootballDataEntryImpl();
+    DataEntry dataEntry = new DirettaScoresDataEntryImpl(WebDriverEnum.PHANTOMJS);
     Map<Integer, Result> scores = dataEntry.extractResults(timeFrame);
     
     if (scores != null && !scores.isEmpty()) {

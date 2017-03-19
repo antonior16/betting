@@ -35,7 +35,8 @@ public class Odds implements Serializable {
   }
   
   public Odds(
-      String match,
+      Team homeTeamName,
+      Team awayTeamName,
       Double homeWin,
       Double draw,
       Double awayWin,
@@ -44,6 +45,8 @@ public class Odds implements Serializable {
       Double gol,
       Double noGol) {
     super();
+    this.homeTeamName = homeTeamName;
+    this.awayTeamName = awayTeamName;
     this.match = match;
     this.homeWin = homeWin;
     this.draw = draw;
@@ -134,7 +137,8 @@ public class Odds implements Serializable {
     this.noGol = noGol;
   }
   
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
    * @see java.lang.Object#hashCode()
    */
   @Override
@@ -147,9 +151,8 @@ public class Odds implements Serializable {
     return result;
   }
   
- 
-  
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
    * @see java.lang.Object#equals(java.lang.Object)
    */
   @Override
@@ -178,7 +181,7 @@ public class Odds implements Serializable {
       return false;
     return true;
   }
-
+  
   @Override
   public String toString() {
     return "Odds [homeTeamName=" + homeTeamName + ", awayTeamName=" + awayTeamName + ", date=" + date

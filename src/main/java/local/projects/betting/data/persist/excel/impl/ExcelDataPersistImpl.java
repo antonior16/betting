@@ -3,11 +3,13 @@ package local.projects.betting.data.persist.excel.impl;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -169,7 +171,7 @@ public class ExcelDataPersistImpl implements DataPersist {
     XSSFWorkbook workbook;
     try {
       workbook = new XSSFWorkbook(new FileInputStream(fileName));
-      
+      CellStyle cellStyle = workbook.createCellStyle();
       // int index = workbook.getSheetIndex("Quote");
       // workbook.removeSheetAt(index);
       
@@ -185,7 +187,15 @@ public class ExcelDataPersistImpl implements DataPersist {
           
           LOGGER.debug(objArr.getHomeTeamName() + " : " + objArr.getAwayTeamName().getName());
           Cell cell = row.createCell(0);
-          cell.setCellValue(objArr.getDate().toLocaleString());
+          CreationHelper createHelper = workbook.getCreationHelper();
+          cellStyle.setDataFormat(
+              createHelper.createDataFormat().getFormat("d/m/yy"));
+          if (objArr.getDate() == null) {
+            cell.setCellValue(new Date());
+          } else {
+            cell.setCellValue(objArr.getDate().toLocaleString());
+          }
+          cell.setCellStyle(cellStyle);
           
           cell = row.createCell(1);
           cell.setCellValue(objArr.getHomeTeamName().getName());
@@ -193,7 +203,6 @@ public class ExcelDataPersistImpl implements DataPersist {
           cell = row.createCell(2);
           cell.setCellValue(objArr.getAwayTeamName().getName());
           
-          CellStyle cellStyle = workbook.createCellStyle();
           cellStyle.setDataFormat(
               workbook.getCreationHelper().createDataFormat().getFormat("#,##0.00"));
           
@@ -208,6 +217,30 @@ public class ExcelDataPersistImpl implements DataPersist {
           cell = row.createCell(5);
           cell.setCellValue(objArr.getAwayWin());
           cell.setCellStyle(cellStyle);
+          
+          if (objArr.getUnder() != null) {
+            cell = row.createCell(6);
+            cell.setCellValue(objArr.getUnder());
+            cell.setCellStyle(cellStyle);
+          }
+          
+          if (objArr.getOver() != null) {
+            cell = row.createCell(7);
+            cell.setCellValue(objArr.getOver());
+            cell.setCellStyle(cellStyle);
+          }
+          
+          if (objArr.getGol() != null) {
+            cell = row.createCell(8);
+            cell.setCellValue(objArr.getGol());
+            cell.setCellStyle(cellStyle);
+          }
+          
+          if (objArr.getNoGol() != null) {
+            cell = row.createCell(9);
+            cell.setCellValue(objArr.getNoGol());
+            cell.setCellStyle(cellStyle);
+          }
           
         } catch (Exception e) {
           LOGGER.error(
@@ -309,7 +342,7 @@ public class ExcelDataPersistImpl implements DataPersist {
         FileOutputStream out = new FileOutputStream(fileName);
         workbook.write(out);
         out.close();
-        LOGGER.info("Odds have been writed in: " + fileName);
+        LOGGER.info("Scores have been writed in: " + fileName);
       } catch (IOException e1) {
         // TODO Auto-generated catch block
         e1.printStackTrace();

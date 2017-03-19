@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import local.projects.betting.api.OddsDataEntry;
 import local.projects.betting.api.ScoreDataEntry;
 import local.projects.betting.data.entry.selenium.web.driver.impl.AbstractSeleniumWebDriverDataEntryImpl;
+import local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum;
 import local.projects.betting.model.Odds;
 import local.projects.betting.model.Result;
 
@@ -15,6 +16,10 @@ public class AbstractSnaiDataEntryImpl extends AbstractSeleniumWebDriverDataEntr
     implements
     OddsDataEntry,
     ScoreDataEntry {
+  public AbstractSnaiDataEntryImpl(WebDriverEnum webDriver) {
+    super(webDriver);
+  }
+
   private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSnaiDataEntryImpl.class);
   
   @Override
