@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,13 +41,16 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
         // Check the title of the page
         LOGGER.info("Page title is: " + driver.getTitle());
         try {
-        	
-        	driver.findElement(By.linkText("calcio")).click();
-        	driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-
-        	driver.findElement(By.linkText("OGGI")).click();
-        	driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-          WebElement tableElement = driver.findElement(By.tagName("table"));
+          WebDriverWait wait = new WebDriverWait(driver, 10);
+          wait.until(ExpectedConditions.elementToBeClickable(By.linkText("calcio"))).click();
+          // driver.findElement(By.linkText("calcio")).click();
+          
+          // driver.findElement(By.linkText("OGGI")).click();
+          wait.until(ExpectedConditions.elementToBeClickable(By.linkText("OGGI"))).click();
+          
+          // WebElement tableElement = driver.findElement(By.tagName("table"));
+          
+          WebElement tableElement = wait.until(ExpectedConditions.elementToBeClickable(By.tagName("table")));
           
           // create empty table object and iterate through all rows of the found
           // table element
@@ -81,7 +86,7 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
               try {
                 String match = userTable.get(i).get("1X2 FINALE,U/O 2,5,GOL NO GOL").getText();
                 
-                match = match.substring(match.indexOf("\n"),match.length());
+                match = match.substring(match.indexOf("\n"), match.length());
                 Double home = new Double(format.parse(userTable.get(i).get("1").getText()).doubleValue());
                 Double draw = new Double(format.parse(userTable.get(i).get("X").getText()).doubleValue());
                 Double away = new Double(format.parse(userTable.get(i).get("2").getText()).doubleValue());

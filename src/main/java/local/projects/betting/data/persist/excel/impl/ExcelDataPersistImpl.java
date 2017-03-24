@@ -175,12 +175,8 @@ public class ExcelDataPersistImpl implements DataPersist {
       workbook = new XSSFWorkbook(new FileInputStream(fileName));
       
       CellStyle cellStyle = workbook.createCellStyle();
-      // int index = workbook.getSheetIndex("Quote");
-      // workbook.removeSheetAt(index);
       int sheetIndex = workbook.getSheetIndex(sheetName);
-      if (sheetIndex>0) {
-    	  workbook.removeSheetAt(sheetIndex);
-	}
+      workbook.removeSheetAt(sheetIndex);
       XSSFSheet sheet = workbook.createSheet(sheetName);
       // Iterate over data and write to sheet
       Set<Integer> keyset = odds.keySet();
@@ -198,8 +194,8 @@ public class ExcelDataPersistImpl implements DataPersist {
               createHelper.createDataFormat().getFormat("d-m-yy"));
           cell.setCellStyle(cellStyle);
           if (objArr.getDate() == null) {
-        	  DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-        	  String oddsDate = df.format(new Date()).toString();
+            DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+            String oddsDate = df.format(new Date()).toString();
             cell.setCellValue(oddsDate);
           } else {
             cell.setCellValue(objArr.getDate().toLocaleString());
@@ -280,12 +276,9 @@ public class ExcelDataPersistImpl implements DataPersist {
     try {
       workbook = new XSSFWorkbook(new FileInputStream(fileName));
       
-      // int index = workbook.getSheetIndex("Quote");
-      // workbook.removeSheetAt(index);
       int sheetIndex = workbook.getSheetIndex(sheetName);
-      if (sheetIndex>0) {
-    	  workbook.removeSheetAt(sheetIndex);
-	}
+      workbook.removeSheetAt(sheetIndex);
+      
       XSSFSheet sheet = workbook.createSheet(sheetName);
       // Iterate over data and write to sheet
       Set<Integer> keyset = results.keySet();
@@ -304,7 +297,9 @@ public class ExcelDataPersistImpl implements DataPersist {
           cellStyle.setDataFormat(
               createHelper.createDataFormat().getFormat("d-m-yy"));
           cell.setCellStyle(cellStyle);
-          cell.setCellValue(objArr.getDate().toLocaleString());
+          DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+          String oddsDate = df.format(objArr.getDate()).toString();
+          cell.setCellValue(oddsDate);
           
           cell = row.createCell(1);
           cell.setCellValue(objArr.getHomeTeamName().getName());

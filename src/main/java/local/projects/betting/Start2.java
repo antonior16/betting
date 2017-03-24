@@ -56,11 +56,11 @@ public class Start2 {
 
 	public static void main(String[] args) {
 		Start2 s = new Start2();
-		s.setSheetName("Risultati");
-		s.extractResults("p1", DataPersistProviderEnum.EXCEL);
+//		s.setSheetName("Risultati");
+//		s.extractResults("p1", DataPersistProviderEnum.EXCEL);
 
-//		s.setSheetName("Quote");
-//		s.extractOdds(DataPersistProviderEnum.EXCEL);
+		s.setSheetName("Quote");
+		s.extractOdds(DataPersistProviderEnum.EXCEL);
 		//
 		// s.setSheetName("Fixtures");
 		// s.extractFixtures("p1", DataPersistProviderEnum.EXCEL);
