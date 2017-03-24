@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -32,12 +33,18 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
     Map<Integer, Odds> result = new HashMap<Integer, Odds>();
     if (!leagues.isEmpty()) {
       for (League league : leagues) {
-        driver.get(league.getBooksUrl());
+        driver.get(league.getOddsUrl());
         // And now use this to visit Google
         LOGGER.info("League: " + league.getName());
         // Check the title of the page
         LOGGER.info("Page title is: " + driver.getTitle());
         try {
+        	
+        	driver.findElement(By.linkText("calcio")).click();
+        	driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+
+        	driver.findElement(By.linkText("OGGI")).click();
+        	driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
           WebElement tableElement = driver.findElement(By.tagName("table"));
           
           // create empty table object and iterate through all rows of the found
@@ -73,6 +80,8 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
             for (int i = 1; i < userTable.size(); i++) {
               try {
                 String match = userTable.get(i).get("1X2 FINALE,U/O 2,5,GOL NO GOL").getText();
+                
+                match = match.substring(match.indexOf("\n"),match.length());
                 Double home = new Double(format.parse(userTable.get(i).get("1").getText()).doubleValue());
                 Double draw = new Double(format.parse(userTable.get(i).get("X").getText()).doubleValue());
                 Double away = new Double(format.parse(userTable.get(i).get("2").getText()).doubleValue());
@@ -105,7 +114,7 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
   private void populateLeagues() {
     // Creating Leagues
     leagues = new ArrayList<League>();
-    League serieA = new League("Serie A", "https://www.snai.it/sport/CALCIO/SERIE%20A");
+    League serieA = new League("Serie A", "https://www.snai.it/sport");
     // League serieB = new League("Serie B",
     // "https://www.snai.it/sport/CALCIO/SERIE%20B");
     // League liga = new League("Liga",

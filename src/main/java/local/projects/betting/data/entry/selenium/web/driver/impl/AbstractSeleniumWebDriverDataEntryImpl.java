@@ -1,12 +1,12 @@
 package local.projects.betting.data.entry.selenium.web.driver.impl;
 
-import java.util.Map;
-
+import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
-import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,16 +26,19 @@ public class AbstractSeleniumWebDriverDataEntryImpl {
     String path = null;
     switch (webDriver) {
       case CHROME:
-        path = "/Users/antonio/Desktop/chromedriver/chromedriver.exe";
+        path = "chromedriver/chromedriver.exe";
         System.setProperty("webdriver.chrome.driver", path);
         driver = new ChromeDriver();
         break;
       case PHANTOMJS:
-        // DesiredCapabilities caps = DesiredCapabilities.phantomjs();
-        // caps.setCapability(
-        // PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY,
-        // phantomJsBinaryPath);
-        path = "/Users/antonio/Downloads/phantomjs-2.1.1-windows/bin/phantomjs.exe";
+    	  String PROXY = "192.168.43.1:39910";
+    	  //Bellow given syntaxes will set browser proxy settings using DesiredCapabilities.
+    	  Proxy proxy = new Proxy();
+    	  proxy.setHttpProxy(PROXY).setFtpProxy(PROXY).setSslProxy(PROXY)
+    	    .setSocksProxy(PROXY);
+    	  DesiredCapabilities cap = new DesiredCapabilities();
+    	  cap.setCapability(CapabilityType.PROXY, proxy);
+        path = "phantomjs-2.1.1-windows/bin/phantomjs.exe";
         System.setProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, path);
         driver = new PhantomJSDriver();
     }

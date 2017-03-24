@@ -91,7 +91,7 @@ public class App {
     populateLeagues();
     
     for (League league : leagues) {
-      driver.get(league.getBooksUrl());
+      driver.get(league.getOddsUrl());
       // And now use this to visit Google
       LOGGER.info("League: " + league.getName());
       // Check the title of the page

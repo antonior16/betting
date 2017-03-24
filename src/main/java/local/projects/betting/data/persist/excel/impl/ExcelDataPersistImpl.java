@@ -3,6 +3,8 @@ package local.projects.betting.data.persist.excel.impl;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -171,11 +173,15 @@ public class ExcelDataPersistImpl implements DataPersist {
     XSSFWorkbook workbook;
     try {
       workbook = new XSSFWorkbook(new FileInputStream(fileName));
+      
       CellStyle cellStyle = workbook.createCellStyle();
       // int index = workbook.getSheetIndex("Quote");
       // workbook.removeSheetAt(index);
-      
-      XSSFSheet sheet = workbook.getSheet(sheetName);
+      int sheetIndex = workbook.getSheetIndex(sheetName);
+      if (sheetIndex>0) {
+    	  workbook.removeSheetAt(sheetIndex);
+	}
+      XSSFSheet sheet = workbook.createSheet(sheetName);
       // Iterate over data and write to sheet
       Set<Integer> keyset = odds.keySet();
       int rownum = 0;
@@ -189,13 +195,15 @@ public class ExcelDataPersistImpl implements DataPersist {
           Cell cell = row.createCell(0);
           CreationHelper createHelper = workbook.getCreationHelper();
           cellStyle.setDataFormat(
-              createHelper.createDataFormat().getFormat("d/m/yy"));
+              createHelper.createDataFormat().getFormat("d-m-yy"));
+          cell.setCellStyle(cellStyle);
           if (objArr.getDate() == null) {
-            cell.setCellValue(new Date());
+        	  DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        	  String oddsDate = df.format(new Date()).toString();
+            cell.setCellValue(oddsDate);
           } else {
             cell.setCellValue(objArr.getDate().toLocaleString());
           }
-          cell.setCellStyle(cellStyle);
           
           cell = row.createCell(1);
           cell.setCellValue(objArr.getHomeTeamName().getName());
@@ -274,8 +282,11 @@ public class ExcelDataPersistImpl implements DataPersist {
       
       // int index = workbook.getSheetIndex("Quote");
       // workbook.removeSheetAt(index);
-      
-      XSSFSheet sheet = workbook.getSheet(sheetName);
+      int sheetIndex = workbook.getSheetIndex(sheetName);
+      if (sheetIndex>0) {
+    	  workbook.removeSheetAt(sheetIndex);
+	}
+      XSSFSheet sheet = workbook.createSheet(sheetName);
       // Iterate over data and write to sheet
       Set<Integer> keyset = results.keySet();
       int rownum = 0;
@@ -285,8 +296,14 @@ public class ExcelDataPersistImpl implements DataPersist {
         try {
           // Saving only match having Odds
           
-          LOGGER.debug(objArr.getAwayTeamName().getName() + " : " + objArr.getAwayTeamName().getName());
+          LOGGER.debug(objArr.getHomeTeamName().getName() + " : " + objArr.getAwayTeamName().getName());
           Cell cell = row.createCell(0);
+          
+          CreationHelper createHelper = workbook.getCreationHelper();
+          CellStyle cellStyle = workbook.createCellStyle();
+          cellStyle.setDataFormat(
+              createHelper.createDataFormat().getFormat("d-m-yy"));
+          cell.setCellStyle(cellStyle);
           cell.setCellValue(objArr.getDate().toLocaleString());
           
           cell = row.createCell(1);
