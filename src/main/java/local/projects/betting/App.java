@@ -189,7 +189,7 @@ public class App {
           Team team2 = new Team(match.substring(match.indexOf("-") + 1, match.length()).trim());
           
           // Populating Oddss Map to write in data model (e.g excel)
-          data.put(i, new Odds(team1, team2, home, draw, away, under, over, gol, noGol));
+          data.put(i, new Odds(new Date(2017,25,03),team1, team2, home, draw, away, under, over, gol, noGol));
         } catch (ParseException e) {
           LOGGER.error("An exception has occured parsing string value ", e);
         }

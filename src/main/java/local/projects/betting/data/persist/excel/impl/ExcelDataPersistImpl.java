@@ -193,12 +193,12 @@ public class ExcelDataPersistImpl implements DataPersist {
           cellStyle.setDataFormat(
               createHelper.createDataFormat().getFormat("d-m-yy"));
           cell.setCellStyle(cellStyle);
-          if (objArr.getDate() == null) {
+          if (objArr.getOddsDate() == null) {
             DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
             String oddsDate = df.format(new Date()).toString();
             cell.setCellValue(oddsDate);
           } else {
-            cell.setCellValue(objArr.getDate().toLocaleString());
+            cell.setCellValue(objArr.getOddsDate().toLocaleString());
           }
           
           cell = row.createCell(1);
@@ -298,7 +298,7 @@ public class ExcelDataPersistImpl implements DataPersist {
               createHelper.createDataFormat().getFormat("d-m-yy"));
           cell.setCellStyle(cellStyle);
           DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-          String oddsDate = df.format(objArr.getDate()).toString();
+          String oddsDate = df.format(objArr.getOddsDate()).toString();
           cell.setCellValue(oddsDate);
           
           cell = row.createCell(1);

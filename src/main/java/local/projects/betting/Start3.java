@@ -39,8 +39,8 @@ public class Start3 {
         new ClassPathXmlApplicationContext("classpath:application-context.xml");
     
     Start3 p = context.getBean(Start3.class);
-    // p.extractOdds();
-    p.extractResults("p1");
+    p.extractOdds();
+//    p.extractResults("25-03-2017");
     
   }
   
@@ -55,7 +55,7 @@ public class Start3 {
   }
   
   private void extractResults(String timeFrame) {
-    Map<Integer, Result> scores = resultsDataEntry.extractResults("25-03-2017");
+    Map<Integer, Result> scores = resultsDataEntry.extractResults(timeFrame);
     
     // Map<Integer, Result> scores = new HashMap<Integer, Result>();
     // Result result = new Result(new Date(), new Team("Milan"), new Team("Juventus"), 2, 1);

@@ -22,7 +22,7 @@
 	</bean>
 
 	<bean id="odds"
-		class="local.projects.betting.data.entry.snai.impl.SnaiOddsDataEntryImpl">
+		class="local.projects.betting.data.entry.snai.impl.SnaiOddsDataEntryImpl" scope="prototype">
 		<constructor-arg
 			type="local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum"
 			value="PHANTOMJS"></constructor-arg>
@@ -40,8 +40,6 @@
 		<property name="jdbcTemplate" ref="jdbcTemplate"></property>
 	</bean>
 
-	<bean id="main" class="local.projects.betting.Main" />
-	<bean id="test" class="local.projects.betting.MyBean" />
 	<bean id="start3" class="local.projects.betting.Start3" />
 
 </beans>

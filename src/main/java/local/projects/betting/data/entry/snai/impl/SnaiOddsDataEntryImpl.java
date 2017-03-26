@@ -2,12 +2,13 @@ package local.projects.betting.data.entry.snai.impl;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -24,6 +25,7 @@ import local.projects.betting.model.Team;
 public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
   private static final Logger LOGGER = LoggerFactory.getLogger(SnaiOddsDataEntryImpl.class);
   private List<League> leagues;
+  private Date oddsDate;
   
   public SnaiOddsDataEntryImpl(WebDriverEnum webDriver) {
     super(webDriver);
@@ -82,6 +84,16 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
           NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
           
           if (!userTable.isEmpty()) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy");
+            
+            String timeFrame = sdf.format(new Date()).toString();
+            try {
+              oddsDate = sdf.parse(timeFrame);
+            } catch (ParseException e1) {
+              // TODO Auto-generated catch block
+              e1.printStackTrace();
+            }
+            
             for (int i = 1; i < userTable.size(); i++) {
               try {
                 String match = userTable.get(i).get("1X2 FINALE,U/O 2,5,GOL NO GOL").getText();
@@ -99,7 +111,7 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
                 Team team2 = new Team(match.substring(match.indexOf("-") + 1, match.length()).trim());
                 
                 // Populating Oddss Map to write in data model (e.g excel)
-                result.put(i, new Odds(team1, team2, home, draw, away, under, over, gol, noGol));
+                result.put(i, new Odds(oddsDate, team1, team2, home, draw, away, under, over, gol, noGol));
               } catch (ParseException e) {
                 LOGGER.error("An exception has occured parsing string value ", e);
               }

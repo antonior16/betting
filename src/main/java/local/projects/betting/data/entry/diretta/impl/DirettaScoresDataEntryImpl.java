@@ -52,15 +52,15 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
     ArrayList<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
     try {
       // for (League league : leaguesList.getLeagues()) {
-      WebDriverWait wait = new WebDriverWait(driver, 10);
       driver.get(SCORES_URL);
       // Check the title of the page
       LOGGER.info("Page title is: " + driver.getTitle());
+//      driver.findElement(By.className("yesterday")).click();
       
-      
-      
+      WebDriverWait wait = new WebDriverWait(driver, 30);
       for (int i = 0; i < getDiffDays(timeFrame); i++) {
-        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("yesterday"))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.className("yesterday"))).click();
+        // driver.findElement(By.cssSelector("yesterday")).click();
       }
       
       wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Conclusi"))).click();
@@ -122,8 +122,8 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
             if (score != null &&
                 "Finale".equalsIgnoreCase(userTable.get(i).get("timer").getText())) {
               String time = userTable.get(i).get("time").getText();
-              Team home = new Team(userTable.get(i).get("home").getText());
-              Team away = new Team(userTable.get(i).get("away").getText());
+              Team home = new Team(userTable.get(i).get("home").getText().trim());
+              Team away = new Team(userTable.get(i).get("away").getText().trim());
               LOGGER.info("----------->" + home.getName());
               Integer goalsHomeTeam = Integer.parseInt(score.substring(0, score.indexOf("-") - 1));
               Integer goalsAwayTeam = Integer.parseInt(score.substring(score.indexOf("-") + 2, score.length()));

@@ -18,9 +18,9 @@ public class Result extends Odds implements Serializable {
   public Result() {
   }
   
-  public Result(Date date, Team homeTeamName, Team awayTeamName, int goalsHomeTeam, int goalsAwayTeam) {
+  public Result(Date scoreDate, Team homeTeamName, Team awayTeamName, int goalsHomeTeam, int goalsAwayTeam) {
     buildResult(goalsHomeTeam, goalsAwayTeam);
-    this.setDate(date);
+    this.setOddsDate(scoreDate);
     this.setHomeTeamName(homeTeamName);
     this.setAwayTeamName(awayTeamName);
     this.goalsHomeTeam = goalsHomeTeam;

@@ -29,11 +29,11 @@ public class Start {
     
     o.setAwayTeamName(new Team("lazio"));
     o.setHomeTeamName(new Team("roma"));
-    o.setDate(new Date(2017,02,25));
+    o.setOddsDate(new Date(2017,02,25));
     
     r.setAwayTeamName(new Team("lazio"));
     r.setHomeTeamName(new Team("roma"));
-    r.setDate(new Date(2017,02,25));
+    r.setOddsDate(new Date(2017,02,25));
     
     System.out.println(o.equals(r));
     

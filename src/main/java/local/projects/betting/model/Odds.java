@@ -11,7 +11,7 @@ public class Odds implements Serializable {
   private String match;
   private Team homeTeamName;
   private Team awayTeamName;
-  private Date date;
+  private Date oddsDate;
   private Double homeWin;
   private Double draw;
   private Double awayWin;
@@ -25,8 +25,8 @@ public class Odds implements Serializable {
     
   }
   
-  public Odds(Date date, Team homeTeamName, Team awayTeamName, Double homeWin, Double draw, Double awayWin) {
-    this.date = date;
+  public Odds(Date oddsDate, Team homeTeamName, Team awayTeamName, Double homeWin, Double draw, Double awayWin) {
+    this.oddsDate = oddsDate;
     this.homeTeamName = homeTeamName;
     this.awayTeamName = awayTeamName;
     this.homeWin = homeWin;
@@ -35,6 +35,7 @@ public class Odds implements Serializable {
   }
   
   public Odds(
+      Date oddsDate,
       Team homeTeamName,
       Team awayTeamName,
       Double homeWin,
@@ -45,6 +46,7 @@ public class Odds implements Serializable {
       Double gol,
       Double noGol) {
     super();
+    this.oddsDate = oddsDate;
     this.homeTeamName = homeTeamName;
     this.awayTeamName = awayTeamName;
     this.match = match;
@@ -73,12 +75,12 @@ public class Odds implements Serializable {
     this.awayTeamName = awayTeamName;
   }
   
-  public Date getDate() {
-    return date;
+  public Date getOddsDate() {
+    return oddsDate;
   }
   
-  public void setDate(Date date) {
-    this.date = date;
+  public void setOddsDate(Date oddsDate) {
+    this.oddsDate = oddsDate;
   }
   
   public Double getHomeWin() {
@@ -146,7 +148,7 @@ public class Odds implements Serializable {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((awayTeamName == null) ? 0 : awayTeamName.hashCode());
-    result = prime * result + ((date == null) ? 0 : date.hashCode());
+    result = prime * result + ((oddsDate == null) ? 0 : oddsDate.hashCode());
     result = prime * result + ((homeTeamName == null) ? 0 : homeTeamName.hashCode());
     return result;
   }
@@ -169,10 +171,10 @@ public class Odds implements Serializable {
         return false;
     } else if (!awayTeamName.equals(other.awayTeamName))
       return false;
-    if (date == null) {
-      if (other.date != null)
+    if (oddsDate == null) {
+      if (other.oddsDate != null)
         return false;
-    } else if (!date.equals(other.date))
+    } else if (!oddsDate.equals(other.oddsDate))
       return false;
     if (homeTeamName == null) {
       if (other.homeTeamName != null)
@@ -184,7 +186,7 @@ public class Odds implements Serializable {
   
   @Override
   public String toString() {
-    return "Odds [homeTeamName=" + homeTeamName + ", awayTeamName=" + awayTeamName + ", date=" + date
+    return "Odds [homeTeamName=" + homeTeamName + ", awayTeamName=" + awayTeamName + ", date=" + oddsDate
         + ", homeWin=" + homeWin + ", draw=" + draw + ", awayWin=" + awayWin + ", under=" + under + ", over="
         + over + ", gol=" + gol + ", noGol=" + noGol + "]";
   }

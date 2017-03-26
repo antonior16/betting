@@ -23,9 +23,6 @@ public class JdbcDataPersistImpl implements DataPersist {
   private static final Logger LOGGER = LoggerFactory.getLogger(JdbcDataPersistImpl.class);
   @Autowired
   private JdbcTemplate jdbcTemplate;
-  private String result;
-  private String goalNoGol;
-  private String underOver;
   
   public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
@@ -40,16 +37,11 @@ public class JdbcDataPersistImpl implements DataPersist {
         // Saving only match having Odds
         
         LOGGER.debug(objArr.getHomeTeamName() + " : " + objArr.getAwayTeamName().getName());
-        
-        if (objArr.getDate() == null) {
-          DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-          String oddsDate = df.format(new Date()).toString();
-        }
-        
+                
         String SQL =
-            "insert into quote (Casa, Trasferta, S1 , SX , S2, Under, Over, Gol, NoGol) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            "insert into quote (DataPartita,Casa, Trasferta, S1 , SX , S2, Under, Over, Gol, NoGol) values (?,?, ?, ?, ?, ?, ?, ?, ?, ?)";
         LOGGER.info(objArr.toString());
-        jdbcTemplate.update(SQL, objArr.getHomeTeamName().getName(), objArr.getAwayTeamName().getName(),
+        jdbcTemplate.update(SQL,objArr.getOddsDate(), objArr.getHomeTeamName().getName(), objArr.getAwayTeamName().getName(),
             objArr.getHomeWin(),
             objArr.getDraw(), objArr.getAwayWin(), objArr.getUnder(), objArr.getOver(), objArr.getGol(),
             objArr.getNoGol());
@@ -57,8 +49,8 @@ public class JdbcDataPersistImpl implements DataPersist {
             "Created Record Home = " + objArr.getHomeTeamName() + " Away = " + objArr.getAwayTeamName() + "in quote");
         
         SQL =
-            "insert into partite (Casa, Trasferta, S1 , SX , S2, Under, Over, Gol, NoGol) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(SQL, objArr.getHomeTeamName().getName(), objArr.getAwayTeamName().getName(),
+            "insert into partite (Data_Partita,Casa, Trasferta, S1 , SX , S2, Under, Over, Gol, NoGol) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(SQL, objArr.getOddsDate(),objArr.getHomeTeamName().getName(), objArr.getAwayTeamName().getName(),
             objArr.getHomeWin(),
             objArr.getDraw(), objArr.getAwayWin(), objArr.getUnder(), objArr.getOver(), objArr.getGol(),
             objArr.getNoGol());
@@ -67,7 +59,7 @@ public class JdbcDataPersistImpl implements DataPersist {
       }
     }
     return;
-  }
+}
   
   @Override
   public void persistFixtures(Map<Integer, Fixture> fixtures) {
@@ -86,7 +78,7 @@ public class JdbcDataPersistImpl implements DataPersist {
         
         LOGGER.debug(objArr.getHomeTeamName() + " : " + objArr.getAwayTeamName().getName());
         String resultDate = null;
-        if (objArr.getDate() != null) {
+        if (objArr.getOddsDate() != null) {
           DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
           resultDate = df.format(new Date()).toString();
         }
@@ -94,7 +86,7 @@ public class JdbcDataPersistImpl implements DataPersist {
             "insert into risultati (data_partita,Casa, Trasferta, Risultato, Segno, gol_nogol, under_over) values (?, ?, ?, ?, ?, ?,?)";
         try {
           LOGGER.info(objArr.toString());
-          jdbcTemplate.update(SQL, objArr.getDate(), objArr.getHomeTeamName().getName(),
+          jdbcTemplate.update(SQL, objArr.getOddsDate(), objArr.getHomeTeamName().getName(),
               objArr.getAwayTeamName().getName(),
               objArr.getSign(), objArr.getScore(),
               objArr.getGoalNoGol(), objArr.getUnderOver());
@@ -104,8 +96,8 @@ public class JdbcDataPersistImpl implements DataPersist {
         } catch (Exception e) {
           LOGGER.error("Error performing " + SQL, e);
         }
-      }
-      return;
+      }    
     }
+    return;
   }
 }
