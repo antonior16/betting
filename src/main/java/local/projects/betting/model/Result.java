@@ -10,11 +10,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Result extends Odds implements Serializable {
   private int goalsHomeTeam;
   private int goalsAwayTeam;
+  private String sign;
+  private String goalNoGol;
+  private String underOver;
+  private String score;
   
   public Result() {
   }
   
-  public Result(Date date,Team homeTeamName, Team awayTeamName, int goalsHomeTeam, int goalsAwayTeam) {
+  public Result(Date date, Team homeTeamName, Team awayTeamName, int goalsHomeTeam, int goalsAwayTeam) {
+    buildResult(goalsHomeTeam, goalsAwayTeam);
     this.setDate(date);
     this.setHomeTeamName(homeTeamName);
     this.setAwayTeamName(awayTeamName);
@@ -27,6 +32,34 @@ public class Result extends Odds implements Serializable {
    */
   public int getGoalsHomeTeam() {
     return goalsHomeTeam;
+  }
+  
+  /**
+   * @return the sign
+   */
+  public String getSign() {
+    return sign;
+  }
+  
+  /**
+   * @return the goalNoGol
+   */
+  public String getGoalNoGol() {
+    return goalNoGol;
+  }
+  
+  /**
+   * @return the score
+   */
+  public String getScore() {
+    return score;
+  }
+  
+  /**
+   * @return the underOver
+   */
+  public String getUnderOver() {
+    return underOver;
   }
   
   /**
@@ -92,5 +125,34 @@ public class Result extends Odds implements Serializable {
   @Override
   public String toString() {
     return "Result [goalsHomeTeam=" + goalsHomeTeam + ", goalsAwayTeam=" + goalsAwayTeam + "]";
+  }
+  
+  private void buildResult(int goalsHomeTeam, int goalsAwayTeam) {
+    if (goalsHomeTeam > goalsAwayTeam) {
+      this.sign = "1";
+    } else {
+      this.sign = "2";
+    }
+    
+    if ((goalsHomeTeam - goalsAwayTeam) == 0) {
+      this.sign = "X";
+    }
+    
+    // Setting Gol/NoGol
+    
+    if (goalsHomeTeam > 0 & goalsAwayTeam > 0) {
+      this.goalNoGol = "GOL";
+    } else {
+      this.goalNoGol = "NOGOL";
+    }
+    
+    // Setting Under/Over
+    if (goalsHomeTeam + goalsAwayTeam >= 3) {
+      this.underOver = "OVER";
+    } else {
+      this.underOver = "UNDER";
+    }
+    
+    this.score = goalsHomeTeam + ":" + goalsAwayTeam;
   }
 }

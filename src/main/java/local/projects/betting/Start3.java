@@ -13,16 +13,24 @@ import org.springframework.stereotype.Component;
 import local.projects.betting.api.DataEntry;
 import local.projects.betting.api.DataPersist;
 import local.projects.betting.model.Odds;
+import local.projects.betting.model.Result;
 
 /**
  * Hello world!
  */
 @Component
 public class Start3 {
-  @Resource(name="odds")
-  private DataEntry dataEntry;
-  @Resource(name="jdbcDataPersist")
+  @Resource(
+      name = "odds")
+  private DataEntry oddsDataEntry;
+  
+  @Resource(
+      name = "jdbcDataPersist")
   private DataPersist dataPersist;
+  
+  @Resource(
+      name = "results")
+  private DataEntry resultsDataEntry;
   
   private static final Logger LOGGER = LoggerFactory.getLogger(Start3.class);
   
@@ -31,26 +39,29 @@ public class Start3 {
         new ClassPathXmlApplicationContext("classpath:application-context.xml");
     
     Start3 p = context.getBean(Start3.class);
-    p.extractOdds();
+    // p.extractOdds();
+    p.extractResults("p1");
+    
   }
   
   /**
    * @param s
    */
   private void extractOdds() {
-    Map<Integer, Odds> extractOdds = dataEntry.extractOdds();
-if (extractOdds != null && !extractOdds.isEmpty()) {      
+    Map<Integer, Odds> extractOdds = oddsDataEntry.extractOdds();
+    if (extractOdds != null && !extractOdds.isEmpty()) {
       dataPersist.persistOdds(extractOdds);
     }
   }
   
-  // private void extractResults(String timeFrame, DataPersistProviderEnum dataPersistProvider) {
-  // DataEntry dataEntry = new DirettaScopou resDataEntryImpl(WebDriverEnum.PHANTOMJS);
-  // Map<Integer, Result> scores = dataEntry.extractResults(timeFrame);
-  //
-  // if (scores != null && !scores.isEmpty()) {
-  // DataPersist dataPersist = getDataPersistProvider(dataPersistProvider);
-  // dataPersist.persistResults(scores);
-  // }
-  // }
+  private void extractResults(String timeFrame) {
+    Map<Integer, Result> scores = resultsDataEntry.extractResults("25-03-2017");
+    
+    // Map<Integer, Result> scores = new HashMap<Integer, Result>();
+    // Result result = new Result(new Date(), new Team("Milan"), new Team("Juventus"), 2, 1);
+    // scores.put(1, result);
+    if (scores != null && !scores.isEmpty()) {
+      dataPersist.persistResults(scores);
+    }
+  }
 }

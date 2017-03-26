@@ -21,8 +21,18 @@
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>
 
-	<bean id="odds" class="local.projects.betting.data.entry.snai.impl.SnaiOddsDataEntryImpl">
-	<constructor-arg type="local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum" value="PHANTOMJS"></constructor-arg>
+	<bean id="odds"
+		class="local.projects.betting.data.entry.snai.impl.SnaiOddsDataEntryImpl">
+		<constructor-arg
+			type="local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum"
+			value="PHANTOMJS"></constructor-arg>
+	</bean>
+
+	<bean id="results"
+		class="local.projects.betting.data.entry.diretta.impl.DirettaScoresDataEntryImpl" scope="prototype">
+		<constructor-arg
+			type="local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum"
+			value="PHANTOMJS"></constructor-arg>
 	</bean>
 
 	<bean id="jdbcDataPersist"

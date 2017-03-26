@@ -1,19 +1,16 @@
 package local.projects.betting.data.persist.jdbc.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.spi.LoggingEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.stereotype.Component;
 
 import local.projects.betting.api.DataPersist;
@@ -34,55 +31,40 @@ public class JdbcDataPersistImpl implements DataPersist {
     this.jdbcTemplate = jdbcTemplate;
   }
   
-  private void buildResult(int goalsHomeTeam, int goalsAwayTeam) {
-    if (goalsHomeTeam > goalsAwayTeam) {
-      result = "1";
-    } else {
-      result = "2";
-    }
-    
-    if ((goalsHomeTeam - goalsAwayTeam) == 0) {
-      result = "X";
-    }
-    
-    // Setting Gol/NoGol
-    
-    if (goalsHomeTeam > 0 & goalsAwayTeam > 0) {
-      goalNoGol = "GOL";
-    } else {
-      goalNoGol = "NOGOL";
-    }
-    
-    // Setting Under/Over
-    if (goalsHomeTeam + goalsAwayTeam >= 3) {
-      underOver = "OVER";
-    } else {
-      underOver = "UNDER";
-    }
-  }
-  
   public void persistOdds(Map<Integer, Odds> odds) {
-    Set<Integer> keyset = odds.keySet();
-    for (Integer key : keyset) {
-      final Odds objArr = odds.get(key);
-      
-      // Saving only match having Odds
-      
-      LOGGER.debug(objArr.getHomeTeamName() + " : " + objArr.getAwayTeamName().getName());
-      
-      if (objArr.getDate() == null) {
-        DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-        String oddsDate = df.format(new Date()).toString();
+    if (!odds.isEmpty()) {
+      Set<Integer> keyset = odds.keySet();
+      for (Integer key : keyset) {
+        final Odds objArr = odds.get(key);
+        
+        // Saving only match having Odds
+        
+        LOGGER.debug(objArr.getHomeTeamName() + " : " + objArr.getAwayTeamName().getName());
+        
+        if (objArr.getDate() == null) {
+          DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+          String oddsDate = df.format(new Date()).toString();
+        }
+        
+        String SQL =
+            "insert into quote (Casa, Trasferta, S1 , SX , S2, Under, Over, Gol, NoGol) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        LOGGER.info(objArr.toString());
+        jdbcTemplate.update(SQL, objArr.getHomeTeamName().getName(), objArr.getAwayTeamName().getName(),
+            objArr.getHomeWin(),
+            objArr.getDraw(), objArr.getAwayWin(), objArr.getUnder(), objArr.getOver(), objArr.getGol(),
+            objArr.getNoGol());
+        LOGGER.info(
+            "Created Record Home = " + objArr.getHomeTeamName() + " Away = " + objArr.getAwayTeamName() + "in quote");
+        
+        SQL =
+            "insert into partite (Casa, Trasferta, S1 , SX , S2, Under, Over, Gol, NoGol) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(SQL, objArr.getHomeTeamName().getName(), objArr.getAwayTeamName().getName(),
+            objArr.getHomeWin(),
+            objArr.getDraw(), objArr.getAwayWin(), objArr.getUnder(), objArr.getOver(), objArr.getGol(),
+            objArr.getNoGol());
+        LOGGER.info(
+            "Created Record Home = " + objArr.getHomeTeamName() + " Away = " + objArr.getAwayTeamName() + "in partite");
       }
-      
-      String SQL =
-          "insert into partite (Casa, Trasferta, S1 , SX , S2, Under, Over, Gol, NoGol) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      LOGGER.info(objArr.toString());
-      jdbcTemplate.update(SQL, objArr.getHomeTeamName().getName(), objArr.getAwayTeamName().getName(),
-          objArr.getHomeWin(),
-          objArr.getDraw(), objArr.getAwayWin(), objArr.getUnder(), objArr.getOver(), objArr.getGol(),
-          objArr.getNoGol());
-      LOGGER.info("Created Record Name = " + objArr.getHomeTeamName() + " Age = " + objArr.getAwayTeamName());
     }
     return;
   }
@@ -95,6 +77,35 @@ public class JdbcDataPersistImpl implements DataPersist {
   
   @Override
   public void persistResults(Map<Integer, Result> scores) {
-    // TODO Auto-generated method stub
+    if (!scores.isEmpty()) {
+      Set<Integer> keyset = scores.keySet();
+      for (Integer key : keyset) {
+        final Result objArr = scores.get(key);
+        
+        // Saving only match having Odds
+        
+        LOGGER.debug(objArr.getHomeTeamName() + " : " + objArr.getAwayTeamName().getName());
+        String resultDate = null;
+        if (objArr.getDate() != null) {
+          DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+          resultDate = df.format(new Date()).toString();
+        }
+        String SQL =
+            "insert into risultati (data_partita,Casa, Trasferta, Risultato, Segno, gol_nogol, under_over) values (?, ?, ?, ?, ?, ?,?)";
+        try {
+          LOGGER.info(objArr.toString());
+          jdbcTemplate.update(SQL, objArr.getDate(), objArr.getHomeTeamName().getName(),
+              objArr.getAwayTeamName().getName(),
+              objArr.getSign(), objArr.getScore(),
+              objArr.getGoalNoGol(), objArr.getUnderOver());
+          LOGGER.info(
+              "Created Record Home = " + objArr.getHomeTeamName() + " Away = " + objArr.getAwayTeamName()
+                  + "in risultati");
+        } catch (Exception e) {
+          LOGGER.error("Error performing " + SQL, e);
+        }
+      }
+      return;
+    }
   }
 }

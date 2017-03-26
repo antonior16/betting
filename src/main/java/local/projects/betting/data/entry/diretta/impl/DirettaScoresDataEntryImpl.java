@@ -1,10 +1,13 @@
 package local.projects.betting.data.entry.diretta.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -25,6 +28,8 @@ import local.projects.betting.model.Team;
  */
 public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEntryImpl implements ScoreDataEntry {
   
+  private Date scoreDate;
+  
   public DirettaScoresDataEntryImpl(WebDriverEnum webDriver) {
     super(webDriver);
   }
@@ -42,19 +47,24 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
   
   @Override
   public Map<Integer, Result> extractResults(String timeFrame) {
+    
     Map<Integer, Result> result = new HashMap<Integer, Result>();
     ArrayList<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
     try {
       // for (League league : leaguesList.getLeagues()) {
+      WebDriverWait wait = new WebDriverWait(driver, 10);
       driver.get(SCORES_URL);
       // Check the title of the page
-      LOGGER.info("Page title is: " + driver.getTitle());      
-      driver.findElement(By.cssSelector(".yesterday")).click();
+      LOGGER.info("Page title is: " + driver.getTitle());
       
-      WebDriverWait wait = new WebDriverWait(driver, 10);
+      
+      
+      for (int i = 0; i < getDiffDays(timeFrame); i++) {
+        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("yesterday"))).click();
+      }
+      
       wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Conclusi"))).click();
-//      driver.findElement(By.linkText("Conclusi")).click();
-      
+      // driver.findElement(By.linkText("Conclusi")).click();
       
       List<WebElement> livescoreTables = driver.findElements(By.tagName("table"));
       List<String> fields = new ArrayList<String>();
@@ -76,16 +86,16 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
           WebElement tbody = tableElement.findElement(By.tagName("tbody"));
           
           List<WebElement> rowElements = tbody.findElements(By.tagName("tr"));
-//          int rowId = 0;
+          // int rowId = 0;
           for (WebElement rowElement : rowElements) {
-//            rowId++;
-//            if (rowId == 1) {
-//              continue;
-//            }
+            // rowId++;
+            // if (rowId == 1) {
+            // continue;
+            // }
             
-//            if ("event_round".equalsIgnoreCase(rowElement.getAttribute("class"))) {
-//              break;
-//            }
+            // if ("event_round".equalsIgnoreCase(rowElement.getAttribute("class"))) {
+            // break;
+            // }
             HashMap<String, WebElement> row = new HashMap<String, WebElement>();
             
             // add table cells to current row
@@ -109,19 +119,20 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
           String score = userTable.get(i).get("score").getText();
           if (score != null) {
             
-            // if (score != null &&
-            // "Finale".equalsIgnoreCase(userTable.get(i).get("timer").getText()))
-            // {
-            String time = userTable.get(i).get("time").getText();
-            Team home = new Team(userTable.get(i).get("home").getText());
-            Team away = new Team(userTable.get(i).get("away").getText());
-           LOGGER.info("----------->" + home.getName());
-            Integer goalsHomeTeam = Integer.parseInt(score.substring(0, score.indexOf("-") - 1));
-            Integer goalsAwayTeam = Integer.parseInt(score.substring(score.indexOf("-") + 2, score.length()));
-            // Populating Oddss Map to write in data model (e.g
-            // excel)
-            result.put(++record, new Result(new Date(), home, away, goalsHomeTeam, goalsAwayTeam));
-            LOGGER.debug(home.getName() + " - " + away.getName() + " score has been added ");
+            if (score != null &&
+                "Finale".equalsIgnoreCase(userTable.get(i).get("timer").getText())) {
+              String time = userTable.get(i).get("time").getText();
+              Team home = new Team(userTable.get(i).get("home").getText());
+              Team away = new Team(userTable.get(i).get("away").getText());
+              LOGGER.info("----------->" + home.getName());
+              Integer goalsHomeTeam = Integer.parseInt(score.substring(0, score.indexOf("-") - 1));
+              Integer goalsAwayTeam = Integer.parseInt(score.substring(score.indexOf("-") + 2, score.length()));
+              // Populating Oddss Map to write in data model (e.g
+              // excel)
+              
+              result.put(++record, new Result(scoreDate, home, away, goalsHomeTeam, goalsAwayTeam));
+              LOGGER.debug(home.getName() + " - " + away.getName() + " score has been added ");
+            }
           }
         }
       } else {
@@ -135,5 +146,21 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
     LOGGER.info("Done");
     
     return result;
+  }
+  
+  private long getDiffDays(String timeFrame) {
+    SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy");
+    long dayDiff = 0;
+    try {
+      scoreDate = sdf.parse(timeFrame);
+    } catch (ParseException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+    
+    long diff = new Date().getTime() - scoreDate.getTime();
+    dayDiff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+    
+    return dayDiff;
   }
 }
