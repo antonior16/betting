@@ -79,12 +79,12 @@ public class JdbcDataPersistImpl implements DataPersist {
 					DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 					resultDate = df.format(new Date()).toString();
 				}
-				String SQL = "insert into risultati (data_partita,Casa, Trasferta, Risultato, Segno, gol_nogol, under_over) values (?, ?, ?, ?, ?, ?,?)";
+				String SQL = "insert into risultati (data_partita,Casa, Trasferta, Risultato, Segno, gol_nogol, under_over,multigol_2_4, multigol_2_3) values (?, ?, ?, ?, ?, ?,?,?,?)";
 				try {
 					LOGGER.info(objArr.toString());
 					jdbcTemplate.update(SQL, objArr.getOddsDate(), objArr.getHomeTeamName().getName(),
 							objArr.getAwayTeamName().getName(), objArr.getSign(), objArr.getScore(),
-							objArr.getGoalNoGol(), objArr.getUnderOver());
+							objArr.getGoalNoGol(), objArr.getUnderOver(),objArr.getIs2To4Multigol(),objArr.getIs2To3Multigol());
 					LOGGER.info("Created Record Home = " + objArr.getHomeTeamName() + " Away = "
 							+ objArr.getAwayTeamName() + "in risultati");
 				} catch (Exception e) {
