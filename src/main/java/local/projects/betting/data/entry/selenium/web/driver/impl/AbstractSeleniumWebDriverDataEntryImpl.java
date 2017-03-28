@@ -31,13 +31,15 @@ public class AbstractSeleniumWebDriverDataEntryImpl {
         driver = new ChromeDriver();
         break;
       case PHANTOMJS:
-    	  String PROXY = "192.168.43.1:39910";
     	  //Bellow given syntaxes will set browser proxy settings using DesiredCapabilities.
-    	  Proxy proxy = new Proxy();
-    	  proxy.setHttpProxy(PROXY).setFtpProxy(PROXY).setSslProxy(PROXY)
-    	    .setSocksProxy(PROXY);
-    	  DesiredCapabilities cap = new DesiredCapabilities();
-    	  cap.setCapability(CapabilityType.PROXY, proxy);
+    	  
+    	  String PROXY = "192.168.43.1:39910";
+//    	  Proxy proxy = new Proxy();
+//    	  proxy.setHttpProxy(PROXY).setFtpProxy(PROXY).setSslProxy(PROXY)
+//    	    .setSocksProxy(PROXY);
+//    	  DesiredCapabilities cap = new DesiredCapabilities();
+//    	  cap.setCapability(CapabilityType.PROXY, proxy);
+    	  
         path = "phantomjs-2.1.1-windows/bin/phantomjs.exe";
         System.setProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, path);
         driver = new PhantomJSDriver();

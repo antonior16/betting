@@ -12,7 +12,7 @@
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="net.ucanaccess.jdbc.UcanaccessDriver" />
 		<property name="url"
-			value="jdbc:ucanaccess://C:/git/betting/Database1.accdb" />
+			value="jdbc:ucanaccess://C:/Users/aricciardiello/Downloads/camunda-bpm-examples-master/betting/Database1.accdb" />
 		<property name="username" value="" />
 		<property name="password" value="" />
 	</bean>
@@ -22,14 +22,16 @@
 	</bean>
 
 	<bean id="odds"
-		class="local.projects.betting.data.entry.snai.impl.SnaiOddsDataEntryImpl" scope="prototype">
+		class="local.projects.betting.data.entry.snai.impl.SnaiOddsDataEntryImpl"
+		scope="prototype">
 		<constructor-arg
 			type="local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum"
 			value="PHANTOMJS"></constructor-arg>
 	</bean>
 
 	<bean id="results"
-		class="local.projects.betting.data.entry.diretta.impl.DirettaScoresDataEntryImpl" scope="prototype">
+		class="local.projects.betting.data.entry.diretta.impl.DirettaScoresDataEntryImpl"
+		scope="prototype">
 		<constructor-arg
 			type="local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum"
 			value="PHANTOMJS"></constructor-arg>
