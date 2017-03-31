@@ -92,6 +92,7 @@ public class JdbcDataPersistImpl implements DataPersist {
 				}
 			}
 		}
+		LOGGER.info("All results have been added");
 		return;
 	}
 }
