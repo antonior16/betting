@@ -11,15 +11,20 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import local.projects.betting.api.OddsDataEntry;
+import local.projects.betting.api.ScoreDataEntry;
 import local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum;
 import local.projects.betting.model.League;
 import local.projects.betting.model.Odds;
+import local.projects.betting.model.Result;
 import local.projects.betting.model.Team;
 
 public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
@@ -27,8 +32,11 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
   private List<League> leagues;
   private Date oddsDate;
   
+  @Autowired
+  private WebDriver driver;
+  
   public SnaiOddsDataEntryImpl(WebDriverEnum webDriver) {
-    super(webDriver);
+     super(webDriver);
     populateLeagues();
   }
   
@@ -43,7 +51,7 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
         // Check the title of the page
         LOGGER.info("Page title is: " + driver.getTitle());
         try {
-          WebDriverWait wait = new WebDriverWait(driver, 10);
+          WebDriverWait wait = new WebDriverWait(driver, 120);
           wait.until(ExpectedConditions.elementToBeClickable(By.linkText("calcio"))).click();
           // driver.findElement(By.linkText("calcio")).click();
           
@@ -120,7 +128,7 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
         } catch (Exception e) {
           LOGGER.error("An exception extracting odds ", e);
         } finally {
-          driver.quit();
+//          driver.quit();
         }
         
       }
@@ -161,6 +169,12 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
     // leagues.add(germania2);
     // leagues.add(ligue2);
     // leagues.add(portogallo1);
+  }
+
+  @Override
+  public Map<Integer, Result> extractResults(String timeFrame) {
+    // TODO Auto-generated method stub
+    return null;
   }
   
 }
