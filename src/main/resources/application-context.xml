@@ -1,10 +1,12 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
    http://www.springframework.org/schema/context
-	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 	<context:component-scan base-package="local.projects.betting" />
 	<!-- Initialization for data source -->
@@ -12,7 +14,7 @@
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="net.ucanaccess.jdbc.UcanaccessDriver" />
 		<property name="url"
-			value="jdbc:ucanaccess://C:/Users/aricciardiello/Downloads/camunda-bpm-examples-master/betting/Database1.accdb" />
+			value="jdbc:ucanaccess://#{ systemProperties['user.dir'] }/Database1.accdb" />
 		<property name="username" value="" />
 		<property name="password" value="" />
 	</bean>
@@ -40,6 +42,23 @@
 	<bean id="jdbcDataPersist"
 		class="local.projects.betting.data.persist.jdbc.impl.JdbcDataPersistImpl">
 		<property name="jdbcTemplate" ref="jdbcTemplate"></property>
+	</bean>
+
+
+	<bean id="systemPrereqs"
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject" value="#{@systemProperties}" />
+		<property name="targetMethod" value="putAll" />
+		<property name="arguments">
+			<!-- The new Properties -->
+			<util:properties>
+				<prop key="phantomjs.binary.path">phantomjs-2.1.1-windows/bin/phantomjs.exe</prop>
+			</util:properties>
+		</property>
+	</bean>
+
+	<bean id="driver" class="org.openqa.selenium.phantomjs.PhantomJSDriver"
+		destroy-method="quit">
 	</bean>
 
 	<bean id="start3" class="local.projects.betting.Start3" />
