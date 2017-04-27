@@ -55,7 +55,7 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 	public Map<Integer, Result> extractResults(String timeFrame) {
 
 		Map<Integer, Result> result = new HashMap<Integer, Result>();
-		ArrayList<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
+		List<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
 		try {
 			for (League league : leagues) {
 				driver.get(league.getOddsUrl());
@@ -112,10 +112,10 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 		return result;
 	}
 
-	private ArrayList<HashMap<String, WebElement>> extractRowFromHtmlTable() {
+	private List<HashMap<String, WebElement>> extractRowFromHtmlTable() {
 	  WebDriverWait wait = new WebDriverWait(driver, 120);
 		List<String> fields = extractHeaderFromHtmlTable();
-		ArrayList<HashMap<String, WebElement>> result = new  ArrayList<HashMap<String, WebElement>>();
+		List<HashMap<String, WebElement>> result = new  ArrayList<HashMap<String, WebElement>>();
 		List<WebElement> livescoreTables = driver.findElements(By.tagName("table"));
 		// create empty table object and iterate through all rows of the
 		// found
