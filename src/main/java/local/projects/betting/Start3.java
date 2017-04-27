@@ -1,24 +1,19 @@
 package local.projects.betting;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import local.projects.betting.api.DataEntry;
 import local.projects.betting.api.DataPersist;
 import local.projects.betting.model.Odds;
 import local.projects.betting.model.Result;
-import local.projects.betting.model.Team;
 
 /**
  * Hello world!
@@ -31,20 +26,16 @@ public class Start3 {
 	@Resource(name = "jdbcDataPersist")
 	private DataPersist dataPersist;
 
-	@Resource(name = "results")
-	private DataEntry resultsDataEntry;
-
-	@Autowired
-	public JdbcTemplate jdbcTemplate;
+	 @Resource(name = "results")
+	 private DataEntry resultsDataEntry;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Start3.class);
 
 	public static void main(String[] args) {
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:application-context.xml");
 		Start3 p = context.getBean(Start3.class);
-		p.extractOdds();
-//		p.extractResults("28-03-2017");
-
+		// p.extractOdds();
+		p.extractResults(null);
 	}
 
 	/**
@@ -63,7 +54,7 @@ public class Start3 {
 		// Map<Integer, Result> scores = new HashMap<Integer, Result>();
 		// Result result = new Result(new Date(), new Team("Milan"), new
 		// Team("Juventus"), 2, 1);
-//		scores.put(1, result);
+		// scores.put(1, result);
 		if (scores != null && !scores.isEmpty()) {
 			dataPersist.persistResults(scores);
 		}

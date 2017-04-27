@@ -13,25 +13,26 @@ import local.projects.betting.model.Odds;
 import local.projects.betting.model.Result;
 
 public class AbstractSnaiDataEntryImpl extends AbstractSeleniumWebDriverDataEntryImpl
-    implements
-    OddsDataEntry,
-    ScoreDataEntry {
-  public AbstractSnaiDataEntryImpl(WebDriverEnum webDriver) {
-    super(webDriver);
-  }
+		implements OddsDataEntry, ScoreDataEntry {
+	public AbstractSnaiDataEntryImpl() {		
+	}
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSnaiDataEntryImpl.class);
-  
-  @Override
-  public Map<Integer, Result> extractResults(String timeFrame) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-  
-  @Override
-  public Map<Integer, Odds> extractOdds() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-  
+	public AbstractSnaiDataEntryImpl(WebDriverEnum webDriver) {
+		super(webDriver);
+	}
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSnaiDataEntryImpl.class);
+
+	@Override
+	public Map<Integer, Result> extractResults(String timeFrame) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<Integer, Odds> extractOdds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

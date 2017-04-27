@@ -1,7 +1,7 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
    http://www.springframework.org/schema/context
@@ -23,21 +23,20 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>
 
-	<bean id="odds"
-		class="local.projects.betting.data.entry.snai.impl.SnaiOddsDataEntryImpl"
-		scope="prototype">
-		<constructor-arg
-			type="local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum"
-			value="PHANTOMJS"></constructor-arg>
+	<bean id="leagueList" class="local.projects.betting.model.LeagueList">
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
 	</bean>
 
-	<bean id="results"
-		class="local.projects.betting.data.entry.diretta.impl.DirettaScoresDataEntryImpl"
-		scope="prototype">
-		<constructor-arg
-			type="local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum"
-			value="PHANTOMJS"></constructor-arg>
+	<bean id="odds"
+		class="local.projects.betting.data.entry.snai.impl.SnaiOddsDataEntryImpl">
+		<!-- <constructor-arg -->
+		<!-- type="local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum" -->
+		<!-- value="PHANTOMJS"></constructor-arg> -->
 	</bean>
+
+	<!-- <bean id="results" -->
+	<!-- class="local.projects.betting.data.entry.diretta.impl.DirettaScoresDataEntryImpl"> -->
+	<!-- </bean> -->
 
 	<bean id="jdbcDataPersist"
 		class="local.projects.betting.data.persist.jdbc.impl.JdbcDataPersistImpl">

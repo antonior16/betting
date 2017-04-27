@@ -1,12 +1,13 @@
 package local.projects.betting.data.persist.jdbc.impl;
 
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.spi.LoggingEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ public class JdbcDataPersistImpl implements DataPersist {
 		if (!odds.isEmpty()) {
 			jdbcTemplate.update("DELETE FROM quote");
 
+			Date oddsdate = odds.get(1).getOddsDate();
 			Set<Integer> keyset = odds.keySet();
 			for (Integer key : keyset) {
 				final Odds objArr = odds.get(key);
@@ -54,8 +56,19 @@ public class JdbcDataPersistImpl implements DataPersist {
 				LOGGER.info("Created Record Home = " + objArr.getHomeTeamName() + " Away = " + objArr.getAwayTeamName()
 						+ "in partite");
 			}
+			jdbcTemplate.update("update Leagues set last_odds_updates = " + generateLastUpdateDate(oddsdate));
 		}
 		return;
+	}
+
+	private String generateLastUpdateDate(Date date) {
+		if (date == null) {
+			date = new Date();
+		}
+		NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy");
+		String timeFrame = sdf.format(date).toString();
+		return timeFrame;
 	}
 
 	@Override
@@ -65,11 +78,13 @@ public class JdbcDataPersistImpl implements DataPersist {
 	}
 
 	@Override
-	public void persistResults(Map<Integer, Result> scores) {
-		if (!scores.isEmpty()) {
-			Set<Integer> keyset = scores.keySet();
+	public void persistResults(Map<Integer, Result> results) {
+		if (!results.isEmpty()) {
+			Date resultsDate = results.get(1).getOddsDate();
+
+			Set<Integer> keyset = results.keySet();
 			for (Integer key : keyset) {
-				final Result objArr = scores.get(key);
+				final Result objArr = results.get(key);
 
 				// Saving only match having Odds
 
@@ -84,13 +99,15 @@ public class JdbcDataPersistImpl implements DataPersist {
 					LOGGER.info(objArr.toString());
 					jdbcTemplate.update(SQL, objArr.getOddsDate(), objArr.getHomeTeamName().getName(),
 							objArr.getAwayTeamName().getName(), objArr.getSign(), objArr.getScore(),
-							objArr.getGoalNoGol(), objArr.getUnderOver(),objArr.getIs2To4Multigol(),objArr.getIs2To3Multigol());
+							objArr.getGoalNoGol(), objArr.getUnderOver(), objArr.getIs2To4Multigol(),
+							objArr.getIs2To3Multigol());
 					LOGGER.info("Created Record Home = " + objArr.getHomeTeamName() + " Away = "
 							+ objArr.getAwayTeamName() + "in risultati");
 				} catch (Exception e) {
 					LOGGER.error("Error performing " + SQL, e);
 				}
 			}
+			jdbcTemplate.update("update Leagues set last_results_updates = " + generateLastUpdateDate(resultsDate));
 		}
 		LOGGER.info("All results have been added");
 		return;
