@@ -70,7 +70,7 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 				// wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Conclusi"))).click();
 				// driver.findElement(By.linkText("Conclusi")).click();
 
-				userTable.add(extractRowFromHtmlTable());
+				userTable.addAll(extractRowFromHtmlTable());
 				
 
 			}
@@ -112,10 +112,11 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 		return result;
 	}
 
-	private HashMap<String, WebElement> extractRowFromHtmlTable() {
+	private ArrayList<HashMap<String, WebElement>> extractRowFromHtmlTable() {
+	  WebDriverWait wait = new WebDriverWait(driver, 120);
 		List<String> fields = extractHeaderFromHtmlTable();
+		ArrayList<HashMap<String, WebElement>> result = new  ArrayList<HashMap<String, WebElement>>();
 		List<WebElement> livescoreTables = driver.findElements(By.tagName("table"));
-		HashMap<String, WebElement> row = new HashMap<String, WebElement>();
 		// create empty table object and iterate through all rows of the
 		// found
 		// table element
@@ -137,15 +138,17 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 					// add table cells to current row
 					int columnIndex = 0;
 					List<WebElement> cellElements = rowElement.findElements(By.tagName("td"));
+				  HashMap<String, WebElement> row = new HashMap<String, WebElement>();
 					for (WebElement cellElement : cellElements) {
 						System.out.println("--------->" + fields.get(columnIndex) + " : " + cellElement.getText());
 						row.put(fields.get(columnIndex), cellElement);
 						columnIndex++;
 					}
+	        result.add(row);
 				}
 			}
 		}
-		return row;
+		return result;
 	}
 
 	private List<String> extractHeaderFromHtmlTable() {

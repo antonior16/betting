@@ -46,20 +46,22 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 				// Check the title of the page
 				LOGGER.info("Page title is: " + driver.getTitle());
 				try {
+			    WebDriverWait wait = new WebDriverWait(driver, 120);
 					// wait.until(ExpectedConditions.elementToBeClickable(By.linkText("calcio"))).click();
 					// driver.findElement(By.linkText("calcio")).click();
 					// driver.findElement(By.linkText("OGGI")).click();
 					// wait.until(ExpectedConditions.elementToBeClickable(By.linkText("OGGI"))).click();
-					WebElement dateOdds = wait.until(ExpectedConditions.elementToBeClickable(By.tagName("h4")));
+					String dateOdds = wait.until(ExpectedConditions.elementToBeClickable(By.tagName("h4"))).getText();
 					Date today = new Date();
 
 					Calendar cal = Calendar.getInstance();
 					cal.setTime(today);
 					int year = cal.get(Calendar.YEAR);
-					int month = cal.get(Calendar.MONTH) + 1;
-					int day = cal.get(Calendar.DAY_OF_MONTH);
+					int mm = cal.get(Calendar.MONTH) + 1;
+					String month = String.format("%02d", mm);					
+					String day = String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
 
-					if (dateOdds != null && dateOdds.equals(day + "/" + month)) {
+					if (dateOdds != null && dateOdds.trim().equals(day + "/" + month)) {
 						ArrayList<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
 						userTable.add(extractRowFromTable());
 
@@ -112,7 +114,7 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 		// Creating Leagues
 		leagues = new ArrayList<League>();
 		// League serieA = new League("Serie A", "https://www.snai.it/sport");
-		League serieB = new League("Serie B", "https://www.snai.it/sport/CALCIO/SERIE%20B");
+		League serieB = new League("Serie B", "https://www.snai.it/sport/CALCIO/COLOMBIA%20COPPA");
 		League liga = new League("Liga", "https://www.snai.it/sport/CALCIO/LIGA%20SPAGNOLA");
 		// League ligue1 = new League("Ligue 1",
 		// "https://www.snai.it/sport/CALCIO/LIGUE%201");
@@ -131,7 +133,7 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 
 		// leagues.add(serieA);
 		leagues.add(serieB);
-		leagues.add(liga);
+//		leagues.add(liga);
 		// leagues.add(ligue1);
 		// leagues.add(premierLeague);
 		// leagues.add(bundesliga);
@@ -149,6 +151,7 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 	
 	protected HashMap<String, WebElement> extractRowFromTable() {
 		List<String> tableHeaders = extractTableHeader();
+	  WebDriverWait wait = new WebDriverWait(driver, 120);
 		HashMap<String, WebElement> row = new HashMap<String, WebElement>();
 		WebElement tableElement = wait.until(ExpectedConditions.elementToBeClickable(By.tagName("tbody")));
 		List<WebElement> rowElements = tableElement.findElements(By.tagName("tr"));
@@ -166,7 +169,7 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 
 	protected List<String> extractTableHeader() {
 		ArrayList<String> tableHeaders = new ArrayList<String>();
-
+    WebDriverWait wait = new WebDriverWait(driver, 120);
 		WebElement tableElement = wait.until(ExpectedConditions.elementToBeClickable(By.tagName("thead")));
 		ArrayList<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
 		List<WebElement> rowElements = tableElement.findElements(By.tagName("tr"));

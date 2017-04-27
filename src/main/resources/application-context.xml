@@ -23,9 +23,9 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>
 
-	<bean id="leagueList" class="local.projects.betting.model.LeagueList">
-		<property name="jdbcTemplate" ref="jdbcTemplate" />
-	</bean>
+	<!-- <bean id="leagueList" class="local.projects.betting.model.LeagueList"> -->
+	<!-- <property name="jdbcTemplate" ref="jdbcTemplate" /> -->
+	<!-- </bean> -->
 
 	<bean id="odds"
 		class="local.projects.betting.data.entry.snai.impl.SnaiOddsDataEntryImpl">
@@ -34,9 +34,9 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		<!-- value="PHANTOMJS"></constructor-arg> -->
 	</bean>
 
-	<!-- <bean id="results" -->
-	<!-- class="local.projects.betting.data.entry.diretta.impl.DirettaScoresDataEntryImpl"> -->
-	<!-- </bean> -->
+	<bean id="results"
+		class="local.projects.betting.data.entry.diretta.impl.DirettaScoresDataEntryImpl">
+	</bean>
 
 	<bean id="jdbcDataPersist"
 		class="local.projects.betting.data.persist.jdbc.impl.JdbcDataPersistImpl">

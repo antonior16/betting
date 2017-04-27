@@ -23,7 +23,6 @@ public class AbstractSeleniumWebDriverDataEntryImpl {
 
 	@Autowired
 	protected WebDriver driver;
-	protected WebDriverWait wait = new WebDriverWait(driver, 120);
 
 	public AbstractSeleniumWebDriverDataEntryImpl() {
 	}
