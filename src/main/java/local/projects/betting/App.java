@@ -378,7 +378,7 @@ public class App {
   
   private void populateLeagues() {
     // Creating Leagues
-    League serieA = new League("Serie A", "https://www.snai.it/sport/CALCIO/SERIE%20A");
+//    League serieA = new League("Serie A", "https://www.snai.it/sport/CALCIO/SERIE%20A");
     // League serieB = new League("Serie B",
     // "https://www.snai.it/sport/CALCIO/SERIE%20B");
     // League liga = new League("Liga",
@@ -398,7 +398,7 @@ public class App {
     // League portogallo1 = new League("Portogallo",
     // "https://www.snai.it/sport/CALCIO/PORTOGALLO%201");
     //
-    leagues.add(serieA);
+//    leagues.add(serieA);
     // leagues.add(serieB);
     // leagues.add(liga);
     // leagues.add(ligue1);
