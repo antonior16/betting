@@ -160,10 +160,9 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 					}
 
 					String resultTime = rowElement.findElement(By.className("time")).getText();
-					if (resultTime != null) {
-						Date resultDate;
+					if (lastOddsUpdate!=null && resultTime != null) {
 						try {
-							resultDate = getResultDate(resultTime);
+							Date resultDate = getResultDate(resultTime);
 							if (resultDate.after(lastOddsUpdate)) {
 								continue;
 							} else if (resultDate.before(lastOddsUpdate)) {

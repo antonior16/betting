@@ -54,7 +54,7 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 			try {
 				WebDriverWait wait = new WebDriverWait(driver, 120);
 
-				String todayString = BettingUtil.getDay() + "/" + String.format("%02d", BettingUtil.getMonth());
+				String todayString = String.format("%02d",BettingUtil.getDay()) + "/" + String.format("%02d", BettingUtil.getMonth());
 				// Check if odds exists today
 				String dateOdds = wait.until(ExpectedConditions.elementToBeClickable(By.tagName("h4"))).getText();
 				if (dateOdds != null && dateOdds.trim().equals(todayString)) {
@@ -74,7 +74,6 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 					continue;
 				}
 			} finally {
-				driver.quit();
 			}
 			leagueDao.updateLastOddsDate(league.getLeagueId(), new Date());
 			leagueDao.updateLastScoreDate(league.getLeagueId(), new Date());
