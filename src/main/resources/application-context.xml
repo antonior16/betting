@@ -34,12 +34,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 		class="local.projects.betting.data.entry.diretta.impl.DirettaScoresDataEntryImpl">
 	</bean>
 
-	<!-- <bean id="jdbcDataPersist" -->
-	<!-- class="local.projects.betting.data.persist.jdbc.impl.JdbcDataPersistImpl"> -->
-	<!-- <property name="jdbcTemplate" ref="jdbcTemplate"></property> -->
-	<!-- </bean> -->
-
-
 	<bean id="oddsDao" class="local.projects.betting.dao.impl.OddsDaoJdbcTemplateImpl" />
 
 	<bean id="resultDao"
