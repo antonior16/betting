@@ -1,33 +1,37 @@
 package local.projects.betting.model;
 
 import java.io.Serializable;
-import java.util.logging.Logger;
+import java.util.Date;
 
 public class League implements Serializable {
 	private static final long serialVersionUID = -2308174004403590109L;
+
+	private Long leagueId;
 	private String name;
 	private String oddsUrl;
 	private String scoresUrl;
+	private Date lastOddsUpdate;
+	private Date lastResultsUpdate;
 
-	public League(String name) {
-		super();
-		this.name = name;
+	public League() {
 	}
 
-	public League(String name, String oddsUrl) {
-		super();
-		this.name = name;
-		this.oddsUrl = oddsUrl;
-	}
-
-	public League(String name, String oddsUrl, String scoresUrl) {
-		super();
+	public League(Long leagueId, String name, String oddsUrl, String scoresUrl, Date lastOddsUpdate,
+			Date lastResultsUpdate) {
+		this.leagueId = leagueId;
 		this.name = name;
 		this.oddsUrl = oddsUrl;
 		this.scoresUrl = scoresUrl;
+		this.lastOddsUpdate = lastOddsUpdate;
+		this.lastResultsUpdate = lastResultsUpdate;
 	}
 
-	public League() {
+	public Long getLeagueId() {
+		return leagueId;
+	}
+
+	public void setLeagueId(Long leagueId) {
+		this.leagueId = leagueId;
 	}
 
 	public String getName() {
@@ -52,6 +56,22 @@ public class League implements Serializable {
 
 	public void setScoresUrl(String scoresUrl) {
 		this.scoresUrl = scoresUrl;
+	}
+
+	public Date getLastOddsUpdate() {
+		return lastOddsUpdate;
+	}
+
+	public void setLastOddsUpdate(Date lastOddsUpdate) {
+		this.lastOddsUpdate = lastOddsUpdate;
+	}
+
+	public Date getLastResultsUpdate() {
+		return lastResultsUpdate;
+	}
+
+	public void setLastResultsUpdate(Date lastResultsUpdate) {
+		this.lastResultsUpdate = lastResultsUpdate;
 	}
 
 	@Override

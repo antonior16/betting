@@ -1,7 +1,7 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
    http://www.springframework.org/schema/context
@@ -24,27 +24,30 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	</bean>
 
 	<bean id="odds"
-		class="local.projects.betting.data.entry.snai.impl.SnaiOddsDataEntryImpl"
-		scope="prototype">
-		<constructor-arg
-			type="local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum"
-			value="PHANTOMJS"></constructor-arg>
+		class="local.projects.betting.data.entry.snai.impl.SnaiOddsDataEntryImpl" scope="prototype">
+		<!-- <constructor-arg -->
+		<!-- type="local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum" -->
+		<!-- value="PHANTOMJS"></constructor-arg> -->
 	</bean>
 
 	<bean id="results"
-		class="local.projects.betting.data.entry.diretta.impl.DirettaScoresDataEntryImpl"
-		scope="prototype">
-		<constructor-arg
-			type="local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum"
-			value="PHANTOMJS"></constructor-arg>
+		class="local.projects.betting.data.entry.diretta.impl.DirettaScoresDataEntryImpl" scope="prototype">
 	</bean>
 
-	<bean id="jdbcDataPersist"
-		class="local.projects.betting.data.persist.jdbc.impl.JdbcDataPersistImpl">
-		<property name="jdbcTemplate" ref="jdbcTemplate"></property>
-	</bean>
+<!-- 	<bean id="jdbcDataPersist" -->
+<!-- 		class="local.projects.betting.data.persist.jdbc.impl.JdbcDataPersistImpl"> -->
+<!-- 		<property name="jdbcTemplate" ref="jdbcTemplate"></property> -->
+<!-- 	</bean> -->
 
 
+	<bean id="oddsDao" class="local.projects.betting.dao.impl.OddsDaoJdbcTemplateImpl" />
+
+	<bean id="resultDao"
+		class="local.projects.betting.dao.impl.ResultDaoJdbcTemplateImpl" />
+
+	<bean id="leagueDao"
+		class="local.projects.betting.dao.impl.LeagueDaoJdbcTemplateImpl" />
+		
 	<bean id="systemPrereqs"
 		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 		<property name="targetObject" value="#{@systemProperties}" />
@@ -58,9 +61,11 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	</bean>
 
 	<bean id="driver" class="org.openqa.selenium.phantomjs.PhantomJSDriver"
-		destroy-method="quit">
+		destroy-method="quit" scope="prototype">
 	</bean>
 
 	<bean id="start3" class="local.projects.betting.Start3" />
+
+	<bean id="start4" class="local.projects.betting.Start4" />
 
 </beans>
