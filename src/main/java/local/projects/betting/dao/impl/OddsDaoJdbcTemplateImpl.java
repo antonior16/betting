@@ -62,4 +62,12 @@ public class OddsDaoJdbcTemplateImpl implements OddsDao {
 	public void update(Integer id, Integer age) {
 	}
 
+	@Override
+	public void clearMatch() {
+		String sql = "DELETE * FROM quote";
+		// Execute deletion
+	    jdbcTemplate.update(sql);
+	    LOGGER.info("Quote table has been truncated");
+	}
+
 }

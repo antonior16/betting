@@ -54,11 +54,13 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 			try {
 				WebDriverWait wait = new WebDriverWait(driver, 120);
 
-				String todayString = String.format("%02d",BettingUtil.getDay()) + "/" + String.format("%02d", BettingUtil.getMonth());
+				String todayString = String.format("%02d", BettingUtil.getDay()) + "/"
+						+ String.format("%02d", BettingUtil.getMonth());
 				// Check if odds exists today
 				String dateOdds = wait.until(ExpectedConditions.elementToBeClickable(By.tagName("h4"))).getText();
 				if (dateOdds != null && dateOdds.trim().equals(todayString)) {
 					List<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
+					oddsDao.clearMatch();
 					userTable.addAll(extractRowFromTable());
 
 					if (!userTable.isEmpty()) {
@@ -69,14 +71,14 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 							result.put(i, odds);
 							oddsDao.create(odds);
 						}
+						leagueDao.updateLastOddsDate(league.getLeagueId(), new Date());
+						leagueDao.updateLastScoreDate(league.getLeagueId(), new Date());
 					}
 				} else {
 					continue;
 				}
 			} finally {
 			}
-			leagueDao.updateLastOddsDate(league.getLeagueId(), new Date());
-			leagueDao.updateLastScoreDate(league.getLeagueId(), new Date());
 		}
 		return result;
 	}

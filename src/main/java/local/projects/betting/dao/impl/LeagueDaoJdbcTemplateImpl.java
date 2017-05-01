@@ -45,6 +45,7 @@ public class LeagueDaoJdbcTemplateImpl implements LeagueDao {
 			@Override
 			public League mapRow(ResultSet rs, int rowNum) throws SQLException {
 				League league = new League();
+				league.setLeagueId(rs.getLong("league_id"));
 				league.setName(rs.getString("name"));
 				league.setLastOddsUpdate(rs.getDate("last_odds_update"));
 				league.setLastResultsUpdate((rs.getDate("last_results_update")));

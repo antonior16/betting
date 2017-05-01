@@ -2,7 +2,7 @@ package local.projects.betting.api;
 
 import java.util.Map;
 
-import local.projects.betting.data.entry.api.football.model.Fixture;
+import local.projects.betting.model.Fixture;
 import local.projects.betting.model.Odds;
 import local.projects.betting.model.Result;
 
