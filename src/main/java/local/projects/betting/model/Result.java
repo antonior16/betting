@@ -6,7 +6,8 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Result extends Odds implements Serializable {
+public class Result implements Serializable {
+	private static final long serialVersionUID = 8431379053065174966L;
 	private int goalsHomeTeam;
 	private int goalsAwayTeam;
 	private String sign;
@@ -21,9 +22,12 @@ public class Result extends Odds implements Serializable {
 
 	public Result(Date scoreDate, Team homeTeamName, Team awayTeamName, int goalsHomeTeam, int goalsAwayTeam) {
 		buildResult(goalsHomeTeam, goalsAwayTeam);
-		this.setOddsDate(scoreDate);
-		this.setHomeTeamName(homeTeamName);
-		this.setAwayTeamName(awayTeamName);
+		this.goalsHomeTeam = goalsHomeTeam;
+		this.goalsAwayTeam = goalsAwayTeam;
+	}
+	
+	public Result(int goalsHomeTeam, int goalsAwayTeam) {
+		buildResult(goalsHomeTeam, goalsAwayTeam);
 		this.goalsHomeTeam = goalsHomeTeam;
 		this.goalsAwayTeam = goalsAwayTeam;
 	}

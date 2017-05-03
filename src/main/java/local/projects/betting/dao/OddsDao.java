@@ -2,15 +2,14 @@ package local.projects.betting.dao;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
+import local.projects.betting.model.Fixture;
 import local.projects.betting.model.Odds;
 
 public interface OddsDao {
 	/**
 	 * This is the method to be used to create a record in the Odds table.
 	 */
-	public void create(Odds odds);
+	public void create(Fixture fixture);
 
 	/**
 	 * This is the method to be used to list down a record from the Odds table

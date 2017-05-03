@@ -9,7 +9,7 @@ import local.projects.betting.api.OddsDataEntry;
 import local.projects.betting.api.ScoreDataEntry;
 import local.projects.betting.data.entry.selenium.web.driver.impl.AbstractSeleniumWebDriverDataEntryImpl;
 import local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum;
-import local.projects.betting.model.Odds;
+import local.projects.betting.model.Fixture;
 import local.projects.betting.model.Result;
 
 public class AbstractSnaiDataEntryImpl extends AbstractSeleniumWebDriverDataEntryImpl
@@ -24,13 +24,13 @@ public class AbstractSnaiDataEntryImpl extends AbstractSeleniumWebDriverDataEntr
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSnaiDataEntryImpl.class);
 
 	@Override
-	public Map<Integer, Result> extractResults(String timeFrame) {
+	public Map<Integer, Fixture> extractResults(String timeFrame) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Map<Integer, Odds> extractOdds() {
+	public Map<Integer, Fixture> extractOdds() {
 		// TODO Auto-generated method stub
 		return null;
 	}

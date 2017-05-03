@@ -23,8 +23,8 @@ import local.projects.betting.dao.LeagueDao;
 import local.projects.betting.dao.ResultDao;
 import local.projects.betting.data.entry.selenium.web.driver.impl.AbstractSeleniumWebDriverDataEntryImpl;
 import local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum;
+import local.projects.betting.model.Fixture;
 import local.projects.betting.model.League;
-import local.projects.betting.model.Odds;
 import local.projects.betting.model.Result;
 import local.projects.betting.model.Team;
 
@@ -54,42 +54,42 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 	private static final String SCORES_URL = "http://www.diretta.it";
 
 	@Override
-	public Map<Integer, Odds> extractOdds() {
+	public Map<Integer, Fixture> extractOdds() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Map<Integer, Result> extractResults(String timeFrame) {
+	public Map<Integer, Fixture> extractResults(String timeFrame) {
 
-		Map<Integer, Result> results = new HashMap<Integer, Result>();
+		Map<Integer, Fixture> results = new HashMap<Integer, Fixture>();
 		List<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
 		for (League league : leagueDao.listLeagues()) {
 			driver.get(league.getScoresUrl());
 			// Check the title of the page
 			LOGGER.info("Page title is: " + driver.getTitle());
 			userTable.addAll(extractRowFromHtmlTable(league));
-			
+
 			if (!userTable.isEmpty()) {
 				for (int i = 0; i < userTable.size(); i++) {
-					Result result;
+					Fixture fixture;
 					try {
-						result = buildResult(userTable.get(i));
-						resultDao.create(result);
+						fixture = buildFixture(userTable.get(i),league);
+						resultDao.create(fixture);
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 			}
-			LOGGER.info("No Scores found for " + league.getName() + " " + "on "+ league.getScoresUrl());
+			LOGGER.info("No Scores found for " + league.getName() + " " + "on " + league.getScoresUrl());
 		}
 		return results;
 	}
 
-	private Result buildResult(HashMap<String, WebElement> userTable) throws ParseException {
+	private Fixture buildFixture(HashMap<String, WebElement> userTable, League league) throws ParseException {
 		String score = userTable.get("score").getText();
-		Result result = null;
+		Fixture fixture = null;
 		if (score != null) {
 			// if (score != null &&
 			// "Finale".equalsIgnoreCase(userTable.get(i).get("timer").getText()))
@@ -104,11 +104,13 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 				// Populating Oddss Map to write in data model (e.g
 				// excel)
 				Date scoreDate = getResultDate(time);
-				result = new Result(scoreDate, home, away, goalsHomeTeam, goalsAwayTeam);
+
+				Result result = new Result(goalsHomeTeam, goalsAwayTeam);
+				fixture = new Fixture(scoreDate, home, away, result, league);
 				LOGGER.debug(home.getName() + " - " + away.getName() + " score has been added ");
 			}
 		}
-		return result;
+		return fixture;
 	}
 
 	private Date getResultDate(String time) throws ParseException {
@@ -160,7 +162,7 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 					}
 
 					String resultTime = rowElement.findElement(By.className("time")).getText();
-					if (lastOddsUpdate!=null && resultTime != null) {
+					if (lastOddsUpdate != null && resultTime != null) {
 						try {
 							Date resultDate = getResultDate(resultTime);
 							if (resultDate.after(lastOddsUpdate)) {

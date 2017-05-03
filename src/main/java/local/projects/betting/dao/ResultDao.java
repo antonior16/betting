@@ -2,6 +2,7 @@ package local.projects.betting.dao;
 
 import java.util.List;
 
+import local.projects.betting.model.Fixture;
 import local.projects.betting.model.Odds;
 import local.projects.betting.model.Result;
 
@@ -10,7 +11,7 @@ public interface ResultDao {
       * This is the method to be used to create
       * a record in the Odds table.
    */
-   public void create(Result odds);
+   public void create(Fixture fixture);
    
    /** 
       * This is the method to be used to list down

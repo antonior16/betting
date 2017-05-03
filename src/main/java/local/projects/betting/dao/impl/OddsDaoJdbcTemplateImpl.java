@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import local.projects.betting.dao.OddsDao;
+import local.projects.betting.model.Fixture;
 import local.projects.betting.model.Odds;
 
 public class OddsDaoJdbcTemplateImpl implements OddsDao {
@@ -21,23 +22,25 @@ public class OddsDaoJdbcTemplateImpl implements OddsDao {
 	}
 
 	@Override
-	public void create(Odds odds) {
-		LOGGER.debug("Inserting :" + odds.getHomeTeamName() + " : " + odds.getAwayTeamName().getName());
+	public void create(Fixture fixture) {
+		LOGGER.debug("Inserting :" + fixture.getHomeTeamName() + " : " + fixture.getAwayTeamName().getName());
 		String SQL = "insert into quote (DataPartita,Casa, Trasferta, S1 , SX , S2, Under, Over, Gol, NoGol) values (?,?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		LOGGER.info(odds.toString());
-		int oddsId = jdbcTemplate.update(SQL, odds.getOddsDate(), odds.getHomeTeamName().getName(),
-				odds.getAwayTeamName().getName(), odds.getHomeWin(), odds.getDraw(), odds.getAwayWin(), odds.getUnder(),
-				odds.getOver(), odds.getGol(), odds.getNoGol());
+		LOGGER.info(fixture.toString());
+		int oddsId = jdbcTemplate.update(SQL, fixture.getMatchDate(), fixture.getHomeTeamName().getName(),
+				fixture.getAwayTeamName().getName(), fixture.getOdds().getHomeWin(), fixture.getOdds().getDraw(),
+				fixture.getOdds().getAwayWin(), fixture.getOdds().getUnder(), fixture.getOdds().getOver(),
+				fixture.getOdds().getGol(), fixture.getOdds().getNoGol());
 
-		LOGGER.info("Created Record " + oddsId + "for: " + "Home = " + odds.getHomeTeamName() + " Away = "
-				+ odds.getAwayTeamName() + "in quote");
+		LOGGER.info("Created Record " + oddsId + "for: " + "Home = " + fixture.getHomeTeamName() + " Away = "
+				+ fixture.getAwayTeamName() + "in quote");
 
 		SQL = "insert into partite (Data_Partita,Casa, Trasferta, S1 , SX , S2, Under, Over, Gol, NoGol) values (?,?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		jdbcTemplate.update(SQL, odds.getOddsDate(), odds.getHomeTeamName().getName(), odds.getAwayTeamName().getName(),
-				odds.getHomeWin(), odds.getDraw(), odds.getAwayWin(), odds.getUnder(), odds.getOver(), odds.getGol(),
-				odds.getNoGol());
-		LOGGER.info("Created Record " + oddsId + "for: " + "Home = " + odds.getHomeTeamName() + " Away = "
-				+ odds.getAwayTeamName() + "in partite");
+		jdbcTemplate.update(SQL, fixture.getMatchDate(), fixture.getHomeTeamName().getName(),
+				fixture.getAwayTeamName().getName(), fixture.getOdds().getHomeWin(), fixture.getOdds().getDraw(),
+				fixture.getOdds().getAwayWin(), fixture.getOdds().getUnder(), fixture.getOdds().getOver(),
+				fixture.getOdds().getGol(), fixture.getOdds().getNoGol());
+		LOGGER.info("Created Record " + oddsId + "for: " + "Home = " + fixture.getHomeTeamName() + " Away = "
+				+ fixture.getAwayTeamName() + "in partite");
 	}
 
 	@Override
@@ -66,8 +69,8 @@ public class OddsDaoJdbcTemplateImpl implements OddsDao {
 	public void clearMatch() {
 		String sql = "DELETE * FROM quote";
 		// Execute deletion
-	    jdbcTemplate.update(sql);
-	    LOGGER.info("Quote table has been truncated");
+		jdbcTemplate.update(sql);
+		LOGGER.info("Quote table has been truncated");
 	}
 
 }

@@ -5,16 +5,19 @@ import java.util.Date;
 
 public class Fixture implements Serializable {
 	private static final long serialVersionUID = -1259418107263305560L;
-	
 	private String match;
 	private Team homeTeamName;
 	private Team awayTeamName;
 	private Date matchDate;
 	private Result result;
 	private Odds odds;
-	private League league; 
+	private League league;
 
-	public Fixture(String match, Team homeTeamName, Team awayTeamName, Date matchDate, Result result, Odds odds,League league) {
+	public Fixture() {
+	}
+
+	public Fixture(String match, Team homeTeamName, Team awayTeamName, Date matchDate, Result result, Odds odds,
+			League league) {
 		super();
 		this.match = match;
 		this.homeTeamName = homeTeamName;
@@ -22,6 +25,24 @@ public class Fixture implements Serializable {
 		this.matchDate = matchDate;
 		this.result = result;
 		this.odds = odds;
+		this.league = league;
+	}
+
+	public Fixture(Date matchDate, Team homeTeamName, Team awayTeamName, Odds odds, League league) {
+		super();
+		this.matchDate = matchDate;
+		this.homeTeamName = homeTeamName;
+		this.awayTeamName = awayTeamName;
+		this.odds = odds;
+		this.league = league;
+	}
+
+	public Fixture(Date matchDate, Team homeTeamName, Team awayTeamName, Result result, League league) {
+		super();
+		this.matchDate = matchDate;
+		this.homeTeamName = homeTeamName;
+		this.awayTeamName = awayTeamName;
+		this.result = result;
 		this.league = league;
 	}
 
@@ -80,6 +101,5 @@ public class Fixture implements Serializable {
 	public void setLeague(League league) {
 		this.league = league;
 	}
-	
 
 }

@@ -3,7 +3,6 @@ package local.projects.betting.data.entry.snai.impl;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,9 +21,9 @@ import local.projects.betting.BettingUtil;
 import local.projects.betting.dao.LeagueDao;
 import local.projects.betting.dao.OddsDao;
 import local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum;
+import local.projects.betting.model.Fixture;
 import local.projects.betting.model.League;
 import local.projects.betting.model.Odds;
-import local.projects.betting.model.Result;
 import local.projects.betting.model.Team;
 
 public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
@@ -43,8 +42,8 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 	}
 
 	@Override
-	public Map<Integer, Odds> extractOdds() {
-		Map<Integer, Odds> result = new HashMap<Integer, Odds>();
+	public Map<Integer, Fixture> extractOdds() {
+		Map<Integer, Fixture> result = new HashMap<Integer, Fixture>();
 		for (League league : leagueDao.listLeagues()) {
 			driver.get(league.getOddsUrl());
 			// And now use this to visit Google
@@ -54,10 +53,12 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 			try {
 				WebDriverWait wait = new WebDriverWait(driver, 120);
 
+				// build today string
 				String todayString = String.format("%02d", BettingUtil.getDay()) + "/"
 						+ String.format("%02d", BettingUtil.getMonth());
-				// Check if odds exists today
 				String dateOdds = wait.until(ExpectedConditions.elementToBeClickable(By.tagName("h4"))).getText();
+
+				// Check for available odds
 				if (dateOdds != null && dateOdds.trim().equals(todayString)) {
 					List<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
 					oddsDao.clearMatch();
@@ -66,10 +67,10 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 					if (!userTable.isEmpty()) {
 						// Splitting Odds
 						for (int i = 0; i < userTable.size(); i++) {
-							Odds odds = buildOdds(userTable.get(i));
+							Fixture fixture = buildFixture(userTable.get(i), league);
 							// Populating Odds Map to write in data
-							result.put(i, odds);
-							oddsDao.create(odds);
+							result.put(i, fixture);
+							oddsDao.create(fixture);
 						}
 						leagueDao.updateLastOddsDate(league.getLeagueId(), new Date());
 						leagueDao.updateLastScoreDate(league.getLeagueId(), new Date());
@@ -83,8 +84,8 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 		return result;
 	}
 
-	private Odds buildOdds(HashMap<String, WebElement> userTable) {
-		Odds odds = null;
+	private Fixture buildFixture(HashMap<String, WebElement> userTable, League league) {
+		Fixture fixture = null;
 		Date oddsDate = new Date();
 		try {
 			String match = userTable.get("1X2 FINALE,U/O 2,5,GOL NO GOL").getText();
@@ -101,18 +102,13 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 			Double noGol = new Double(format.parse(userTable.get("NOGOL").getText()).doubleValue());
 			Team team1 = new Team(match.substring(6, match.indexOf("-") - 1).trim());
 			Team team2 = new Team(match.substring(match.indexOf("-") + 1, match.length()).trim());
-			odds = new Odds(oddsDate, team1, team2, home, draw, away, under, over, gol, noGol);
+			Odds odds = new Odds(home, draw, away, under, over, gol, noGol);
+			fixture = new Fixture(oddsDate, team1, team2, odds, league);
 		} catch (ParseException e) {
 			LOGGER.error("Error parsing element ", e);
 		}
 
-		return odds;
-	}
-
-	@Override
-	public Map<Integer, Result> extractResults(String timeFrame) {
-		// TODO Auto-generated method stub
-		return null;
+		return fixture;
 	}
 
 	protected List<HashMap<String, WebElement>> extractRowFromTable() {
