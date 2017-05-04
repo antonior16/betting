@@ -64,7 +64,7 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 
 		Map<Integer, Fixture> results = new HashMap<Integer, Fixture>();
 		List<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
-		for (League league : leagueDao.listLeagues()) {
+		for (League league : leagueDao.listLeagues4Results()) {
 			driver.get(league.getScoresUrl());
 			// Check the title of the page
 			LOGGER.info("Page title is: " + driver.getTitle());
@@ -74,7 +74,7 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 				for (int i = 0; i < userTable.size(); i++) {
 					Fixture fixture;
 					try {
-						fixture = buildFixture(userTable.get(i),league);
+						fixture = buildFixture(userTable.get(i), league);
 						resultDao.create(fixture);
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
@@ -165,9 +165,7 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 					if (lastOddsUpdate != null && resultTime != null) {
 						try {
 							Date resultDate = getResultDate(resultTime);
-							if (resultDate.after(lastOddsUpdate)) {
-								continue;
-							} else if (resultDate.before(lastOddsUpdate)) {
+							if (resultDate.compareTo(lastOddsUpdate) == 0) {
 								break;
 							}
 

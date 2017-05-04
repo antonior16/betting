@@ -39,7 +39,45 @@ public class LeagueDaoJdbcTemplateImpl implements LeagueDao {
 
 	@Override
 	public List<League> listLeagues() {
-		String sql = "SELECT leagues_odds_providers.league_id, Leagues.name, odds_providers.url AS odds_url, results_providers.url AS results_url, Leagues.last_odds_update, Leagues.last_results_update FROM results_providers INNER JOIN (odds_providers INNER JOIN ((Leagues INNER JOIN leagues_odds_providers ON Leagues.league_id = leagues_odds_providers.league_id) INNER JOIN leagues_results_providers ON Leagues.league_id = leagues_results_providers.league_id) ON odds_providers.odds_provider_id = leagues_odds_providers.odds_provider_id) ON results_providers.result_provider_id = leagues_results_providers.results_provider_id WHERE Leagues.status = 1;";
+		String sql = "SELECT leagues_odds_providers.league_id, Leagues.name, odds_providers.url AS odds_url, results_providers.url AS results_url, Leagues.last_odds_update, Leagues.last_results_update, Leagues.status FROM results_providers INNER JOIN (odds_providers INNER JOIN ((Leagues INNER JOIN leagues_odds_providers ON Leagues.league_id = leagues_odds_providers.league_id) INNER JOIN leagues_results_providers ON Leagues.league_id = leagues_results_providers.league_id) ON odds_providers.odds_provider_id = leagues_odds_providers.odds_provider_id) ON results_providers.result_provider_id = leagues_results_providers.results_provider_id WHERE (((Leagues.status)=True));";
+
+		return jdbcTemplate.query(sql, new RowMapper<League>() {
+			@Override
+			public League mapRow(ResultSet rs, int rowNum) throws SQLException {
+				League league = new League();
+				league.setLeagueId(rs.getLong("league_id"));
+				league.setName(rs.getString("name"));
+				league.setLastOddsUpdate(rs.getDate("last_odds_update"));
+				league.setLastResultsUpdate((rs.getDate("last_results_update")));
+				league.setOddsUrl(rs.getString("odds_url"));
+				league.setScoresUrl(rs.getString("results_url"));
+				return league;
+			}
+		});
+	}
+
+	@Override
+	public List<League> listLeagues4Odds() {
+		String sql = "SELECT leagues_odds_providers.league_id, Leagues.name, odds_providers.url AS odds_url, results_providers.url AS results_url, Leagues.last_odds_update, Leagues.last_results_update, Leagues.status FROM results_providers INNER JOIN (odds_providers INNER JOIN ((Leagues INNER JOIN leagues_odds_providers ON Leagues.league_id = leagues_odds_providers.league_id) INNER JOIN leagues_results_providers ON Leagues.league_id = leagues_results_providers.league_id) ON odds_providers.odds_provider_id = leagues_odds_providers.odds_provider_id) ON results_providers.result_provider_id = leagues_results_providers.results_provider_id WHERE (((Leagues.last_odds_update)=Date()) AND ((Leagues.status)=True));";
+
+		return jdbcTemplate.query(sql, new RowMapper<League>() {
+			@Override
+			public League mapRow(ResultSet rs, int rowNum) throws SQLException {
+				League league = new League();
+				league.setLeagueId(rs.getLong("league_id"));
+				league.setName(rs.getString("name"));
+				league.setLastOddsUpdate(rs.getDate("last_odds_update"));
+				league.setLastResultsUpdate((rs.getDate("last_results_update")));
+				league.setOddsUrl(rs.getString("odds_url"));
+				league.setScoresUrl(rs.getString("results_url"));
+				return league;
+			}
+		});
+	}
+
+	@Override
+	public List<League> listLeagues4Results() {
+		String sql = "SELECT leagues_odds_providers.league_id, Leagues.name, odds_providers.url AS odds_url, results_providers.url AS results_url, Leagues.last_odds_update, Leagues.last_results_update, Leagues.status FROM results_providers INNER JOIN (odds_providers INNER JOIN ((Leagues INNER JOIN leagues_odds_providers ON Leagues.league_id = leagues_odds_providers.league_id) INNER JOIN leagues_results_providers ON Leagues.league_id = leagues_results_providers.league_id) ON odds_providers.odds_provider_id = leagues_odds_providers.odds_provider_id) ON results_providers.result_provider_id = leagues_results_providers.results_provider_id WHERE (((Leagues.last_results_update)=Date()) AND ((Leagues.status)=True));";
 
 		return jdbcTemplate.query(sql, new RowMapper<League>() {
 			@Override

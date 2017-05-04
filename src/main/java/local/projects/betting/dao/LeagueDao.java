@@ -38,5 +38,9 @@ public interface LeagueDao {
 
 	public void updateLastOddsDate(Long leagueId, Date date);
 
+	List<League> listLeagues4Odds();
+
+	List<League> listLeagues4Results();
+
 	
 }

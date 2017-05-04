@@ -2,6 +2,7 @@ package local.projects.betting.data.entry.snai.impl;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,7 +45,7 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 	@Override
 	public Map<Integer, Fixture> extractOdds() {
 		Map<Integer, Fixture> result = new HashMap<Integer, Fixture>();
-		for (League league : leagueDao.listLeagues()) {
+		for (League league : leagueDao.listLeagues4Odds()) {
 			driver.get(league.getOddsUrl());
 			// And now use this to visit Google
 			LOGGER.info("League: " + league.getName());
@@ -59,24 +60,36 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 				String dateOdds = wait.until(ExpectedConditions.elementToBeClickable(By.tagName("h4"))).getText();
 
 				// Check for available odds
-				if (dateOdds != null && dateOdds.trim().equals(todayString)) {
-					List<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
-					oddsDao.clearMatch();
-					userTable.addAll(extractRowFromTable());
+				if (dateOdds != null) {
+					Date nextOddsDate;
+					if (dateOdds.trim().equals(todayString)) {
+						nextOddsDate = new Date();
+						List<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
+						userTable.addAll(extractRowFromTable());
 
-					if (!userTable.isEmpty()) {
-						// Splitting Odds
-						for (int i = 0; i < userTable.size(); i++) {
-							Fixture fixture = buildFixture(userTable.get(i), league);
-							// Populating Odds Map to write in data
-							result.put(i, fixture);
-							oddsDao.create(fixture);
+						if (!userTable.isEmpty()) {
+							// Splitting Odds
+							for (int i = 0; i < userTable.size(); i++) {
+								Fixture odds = buildFixture(userTable.get(i),league);
+								// Populating Odds Map to write in data
+								result.put(i, odds);
+								oddsDao.create(odds);
+							}
 						}
-						leagueDao.updateLastOddsDate(league.getLeagueId(), new Date());
-						leagueDao.updateLastScoreDate(league.getLeagueId(), new Date());
+					} else {
+						dateOdds += "/" + BettingUtil.getYear();
+						SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALIAN);
+						try {
+							nextOddsDate = sf.parse(dateOdds.trim());
+							leagueDao.updateLastOddsDate(league.getLeagueId(), nextOddsDate);
+							leagueDao.updateLastScoreDate(league.getLeagueId(), nextOddsDate);
+						} catch (ParseException e) {
+							LOGGER.error("An exception has occurred " + e);
+						}
+						continue;
 					}
-				} else {
-					continue;
+					leagueDao.updateLastOddsDate(league.getLeagueId(), nextOddsDate);
+					leagueDao.updateLastScoreDate(league.getLeagueId(), nextOddsDate);
 				}
 			} finally {
 			}
