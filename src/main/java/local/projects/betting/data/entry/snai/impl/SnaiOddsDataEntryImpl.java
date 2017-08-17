@@ -45,13 +45,15 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 	@Override
 	public Map<Integer, Fixture> extractOdds() {
 		Map<Integer, Fixture> result = new HashMap<Integer, Fixture>();
-		for (League league : leagueDao.listLeagues4Odds()) {
-			driver.get(league.getOddsUrl());
-			// And now use this to visit Google
-			LOGGER.info("League: " + league.getName());
-			// Check the title of the page
-			LOGGER.info("Page title is: " + driver.getTitle());
-			try {
+		try {
+			List<League> leaguesList = leagueDao.listLeagues();
+			for (League league : leaguesList) {
+				driver.get(league.getOddsUrl());
+				// And now use this to visit Google
+				LOGGER.info("League: " + league.getName());
+				// Check the title of the page
+				LOGGER.info("Page title is: " + driver.getTitle());
+
 				WebDriverWait wait = new WebDriverWait(driver, 120);
 
 				// build today string
@@ -63,6 +65,7 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 				if (dateOdds != null) {
 					Date nextOddsDate;
 					if (dateOdds.trim().equals(todayString)) {
+						oddsDao.clearMatch();
 						nextOddsDate = new Date();
 						List<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
 						userTable.addAll(extractRowFromTable());
@@ -70,7 +73,7 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 						if (!userTable.isEmpty()) {
 							// Splitting Odds
 							for (int i = 0; i < userTable.size(); i++) {
-								Fixture odds = buildFixture(userTable.get(i),league);
+								Fixture odds = buildFixture(userTable.get(i), league);
 								// Populating Odds Map to write in data
 								result.put(i, odds);
 								oddsDao.create(odds);
@@ -91,8 +94,12 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 					leagueDao.updateLastOddsDate(league.getLeagueId(), nextOddsDate);
 					leagueDao.updateLastScoreDate(league.getLeagueId(), nextOddsDate);
 				}
-			} finally {
+
 			}
+		} catch (Exception e) {
+			LOGGER.error("Error parsing element ", e);
+		} finally {
+			driver.quit();
 		}
 		return result;
 	}
@@ -124,7 +131,7 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 		return fixture;
 	}
 
-	protected List<HashMap<String, WebElement>> extractRowFromTable() {
+	protected List<HashMap<String, WebElement>> extractRowFromTable() throws Exception {
 		// wait.until(ExpectedConditions.elementToBeClickable(By.linkText("calcio"))).click();
 		// driver.findElement(By.linkText("calcio")).click();
 		// driver.findElement(By.linkText("OGGI")).click();
@@ -150,7 +157,7 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 		return result;
 	}
 
-	protected List<String> extractTableHeader() {
+	protected List<String> extractTableHeader() throws Exception {
 		ArrayList<String> tableHeaders = new ArrayList<String>();
 		WebDriverWait wait = new WebDriverWait(driver, 120);
 		WebElement tableElement = wait.until(ExpectedConditions.elementToBeClickable(By.tagName("thead")));

@@ -64,25 +64,31 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 
 		Map<Integer, Fixture> results = new HashMap<Integer, Fixture>();
 		List<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
-		for (League league : leagueDao.listLeagues4Results()) {
-			driver.get(league.getScoresUrl());
-			// Check the title of the page
-			LOGGER.info("Page title is: " + driver.getTitle());
-			userTable.addAll(extractRowFromHtmlTable(league));
-
-			if (!userTable.isEmpty()) {
-				for (int i = 0; i < userTable.size(); i++) {
-					Fixture fixture;
-					try {
-						fixture = buildFixture(userTable.get(i), league);
-						resultDao.create(fixture);
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+		try {
+			for (League league : leagueDao.listLeagues4Results()) {
+				driver.get(league.getScoresUrl());
+				// Check the title of the page
+				LOGGER.info("Page title is: " + driver.getTitle());
+				userTable.addAll(extractRowFromHtmlTable(league));
+				if (!userTable.isEmpty()) {
+					for (int i = 0; i < userTable.size(); i++) {
+						Fixture fixture;
+						try {
+							fixture = buildFixture(userTable.get(i), league);
+							resultDao.create(fixture);
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
+					leagueDao.updateLastScoreDate(league.getLeagueId(), null);
 				}
+				LOGGER.info("No Scores found for " + league.getName() + " " + "on " + league.getScoresUrl());
 			}
-			LOGGER.info("No Scores found for " + league.getName() + " " + "on " + league.getScoresUrl());
+		} catch (Exception e) {
+			LOGGER.error("Error parsing element ", e);
+		} finally {
+			driver.quit();
 		}
 		return results;
 	}
@@ -125,8 +131,8 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 		return scoreDate;
 	}
 
-	private List<HashMap<String, WebElement>> extractRowFromHtmlTable(League league) {
-		WebDriverWait wait = new WebDriverWait(driver, 120);
+	private List<HashMap<String, WebElement>> extractRowFromHtmlTable(League league) throws Exception {
+		WebDriverWait wait = new WebDriverWait(driver, 240);
 		Date lastOddsUpdate = league.getLastOddsUpdate();
 		/*
 		 * Search for previous days
@@ -166,22 +172,23 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 						try {
 							Date resultDate = getResultDate(resultTime);
 							if (resultDate.compareTo(lastOddsUpdate) == 0) {
+								// add table cells to current row
+								int columnIndex = 0;
+								List<WebElement> cellElements = rowElement.findElements(By.tagName("td"));
+								HashMap<String, WebElement> row = new HashMap<String, WebElement>();
+								for (WebElement cellElement : cellElements) {
+									System.out.println(
+											"--------->" + fields.get(columnIndex) + " : " + cellElement.getText());
+									row.put(fields.get(columnIndex), cellElement);
+									columnIndex++;
+								}
+								result.add(row);
+							} else {
 								break;
 							}
-
-							// add table cells to current row
-							int columnIndex = 0;
-							List<WebElement> cellElements = rowElement.findElements(By.tagName("td"));
-							HashMap<String, WebElement> row = new HashMap<String, WebElement>();
-							for (WebElement cellElement : cellElements) {
-								System.out.println(
-										"--------->" + fields.get(columnIndex) + " : " + cellElement.getText());
-								row.put(fields.get(columnIndex), cellElement);
-								columnIndex++;
-							}
-							result.add(row);
-						} catch (ParseException e) {
-							LOGGER.error("Error parsing result Date ", e);
+						} catch (Exception e) {
+							LOGGER.error("An Exception has occured", e);
+							throw e;
 						}
 					}
 				}

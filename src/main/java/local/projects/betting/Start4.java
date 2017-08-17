@@ -1,5 +1,7 @@
 package local.projects.betting;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,12 @@ public class Start4 {
 	public static void main(String[] args) {
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:application-context.xml");
 		Start4 p = context.getBean(Start4.class);
-		p.oddsDao.clearMatch();
+		
+		long millisInDay = 60 * 60 * 24 * 1000;
+		long currentTime = new Date().getTime();
+		long dateOnly = (currentTime / millisInDay) * millisInDay;
+		Date clearDate = new Date(dateOnly);
+		
+		System.out.println(clearDate);
 	}
 }

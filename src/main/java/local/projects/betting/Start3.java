@@ -26,8 +26,8 @@ public class Start3 {
 	public static void main(String[] args) {
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:application-context.xml");
 		Start3 p = context.getBean(Start3.class);
+//		p.extractResults(null);
 		p.extractOdds();
-		p.extractResults(null);
 	}
 
 	/**
