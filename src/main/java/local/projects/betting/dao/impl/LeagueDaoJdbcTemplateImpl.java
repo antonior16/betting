@@ -58,7 +58,7 @@ public class LeagueDaoJdbcTemplateImpl implements LeagueDao {
 
 	@Override
 	public List<League> listLeagues4Odds() {
-		String sql = "SELECT leagues_odds_providers.league_id, Leagues.name, odds_providers.url AS odds_url, results_providers.url AS results_url, Leagues.last_odds_update, Leagues.last_results_update, Leagues.status FROM results_providers INNER JOIN (odds_providers INNER JOIN ((Leagues INNER JOIN leagues_odds_providers ON Leagues.league_id = leagues_odds_providers.league_id) INNER JOIN leagues_results_providers ON Leagues.league_id = leagues_results_providers.league_id) ON odds_providers.odds_provider_id = leagues_odds_providers.odds_provider_id) ON results_providers.result_provider_id = leagues_results_providers.results_provider_id WHERE (((Leagues.last_odds_update)=Date()) AND ((Leagues.status)=True));";
+		String sql = "SELECT leagues_odds_providers.league_id, Leagues.name, odds_providers.url AS odds_url, results_providers.url AS results_url, Leagues.last_odds_update, Leagues.last_results_update, Leagues.status FROM results_providers INNER JOIN (odds_providers INNER JOIN ((Leagues INNER JOIN leagues_odds_providers ON Leagues.league_id = leagues_odds_providers.league_id) INNER JOIN leagues_results_providers ON Leagues.league_id = leagues_results_providers.league_id) ON odds_providers.odds_provider_id = leagues_odds_providers.odds_provider_id) ON results_providers.result_provider_id = leagues_results_providers.results_provider_id WHERE (((Leagues.last_odds_update) is null) AND ((Leagues.status)=True));";
 
 		return jdbcTemplate.query(sql, new RowMapper<League>() {
 			@Override

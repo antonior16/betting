@@ -46,55 +46,68 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 	public Map<Integer, Fixture> extractOdds() {
 		Map<Integer, Fixture> result = new HashMap<Integer, Fixture>();
 		try {
+			oddsDao.clearMatch();
+			String todayString = getTodayDate();
+
+			SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALIAN);
+			Date todayDate = sf.parse(todayString + "/" + BettingUtil.getYear());
+
 			List<League> leaguesList = leagueDao.listLeagues();
 			for (League league : leaguesList) {
-				driver.get(league.getOddsUrl());
-				// And now use this to visit Google
-				LOGGER.info("League: " + league.getName());
-				// Check the title of the page
-				LOGGER.info("Page title is: " + driver.getTitle());
+				if (todayDate.equals(league.getLastOddsUpdate())) {
+					continue;
+				} else {
+					driver.get(league.getOddsUrl());
+					// And now use this to visit Google
+					LOGGER.info("----------> LEAGUE : " + league.getName());
+					// Check the title of the page
+					LOGGER.info("---------> Page title is: " + driver.getTitle());
 
-				WebDriverWait wait = new WebDriverWait(driver, 120);
+					WebDriverWait wait = new WebDriverWait(driver, 120);
 
-				// build today string
-				String todayString = String.format("%02d", BettingUtil.getDay()) + "/"
-						+ String.format("%02d", BettingUtil.getMonth());
-				String dateOdds = wait.until(ExpectedConditions.elementToBeClickable(By.tagName("h4"))).getText();
+					String dateOdds = wait.until(ExpectedConditions.elementToBeClickable(By.tagName("h4"))).getText();
 
-				// Check for available odds
-				if (dateOdds != null) {
-					Date nextOddsDate;
-					if (dateOdds.trim().equals(todayString)) {
-						oddsDao.clearMatch();
-						nextOddsDate = new Date();
-						List<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
-						userTable.addAll(extractRowFromTable());
+					// Check for available odds
+					if (dateOdds != null) {
+						Date nextOddsDate;
+						if (dateOdds.trim().equals(todayString)) {
+							LOGGER.info("--------> Today matches for: " + league.getName());
+							nextOddsDate = new Date();
+							List<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
+							userTable.addAll(extractRowFromTable());
 
-						if (!userTable.isEmpty()) {
-							// Splitting Odds
-							for (int i = 0; i < userTable.size(); i++) {
-								Fixture odds = buildFixture(userTable.get(i), league);
-								// Populating Odds Map to write in data
-								result.put(i, odds);
-								oddsDao.create(odds);
+							if (!userTable.isEmpty()) {
+								// Splitting Odds
+								for (int i = 0; i < userTable.size(); i++) {
+									Fixture odds = buildFixture(userTable.get(i), league);
+									// Populating Odds Map to write in data
+									result.put(i, odds);
+									oddsDao.create(odds);
+									LOGGER.info("-------> Saved odds: " + odds.getHomeTeamName().getName() + "-"
+											+ odds.getAwayTeamName().getName());
+								}
 							}
+						} else {
+							LOGGER.info("--------> No matches for: " + league.getName());
+							dateOdds += "/" + BettingUtil.getYear();
+							// sf = new SimpleDateFormat("dd/MM/yyyy",
+							// Locale.ITALIAN);
+							try {
+								nextOddsDate = sf.parse(dateOdds.trim());
+								LOGGER.info("--------> " + league.getName() + ": Next matches on: " + nextOddsDate);
+								leagueDao.updateLastOddsDate(league.getLeagueId(), nextOddsDate);
+								leagueDao.updateLastScoreDate(league.getLeagueId(), nextOddsDate);
+							} catch (ParseException e) {
+								LOGGER.error("An exception has occurred " + e);
+							}
+							continue;
 						}
-					} else {
-						dateOdds += "/" + BettingUtil.getYear();
-						SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALIAN);
-						try {
-							nextOddsDate = sf.parse(dateOdds.trim());
-							leagueDao.updateLastOddsDate(league.getLeagueId(), nextOddsDate);
-							leagueDao.updateLastScoreDate(league.getLeagueId(), nextOddsDate);
-						} catch (ParseException e) {
-							LOGGER.error("An exception has occurred " + e);
-						}
-						continue;
+						LOGGER.info(
+								"--------> " + league.getName() + ": Next matches date updated to: " + nextOddsDate);
+						leagueDao.updateLastOddsDate(league.getLeagueId(), nextOddsDate);
+						leagueDao.updateLastScoreDate(league.getLeagueId(), nextOddsDate);
 					}
-					leagueDao.updateLastOddsDate(league.getLeagueId(), nextOddsDate);
-					leagueDao.updateLastScoreDate(league.getLeagueId(), nextOddsDate);
 				}
-
 			}
 		} catch (Exception e) {
 			LOGGER.error("Error parsing element ", e);
@@ -104,11 +117,18 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 		return result;
 	}
 
+	private String getTodayDate() {
+		// build today string
+		String todayString = String.format("%02d", BettingUtil.getDay()) + "/"
+				+ String.format("%02d", BettingUtil.getMonth());
+		return todayString;
+	}
+
 	private Fixture buildFixture(HashMap<String, WebElement> userTable, League league) {
 		Fixture fixture = null;
 		Date oddsDate = new Date();
 		try {
-			String match = userTable.get("1X2 FINALE,U/O 2,5,GOL NO GOL").getText();
+			String match = userTable.get("1X2 FINALE,U/O ,G/NG").getText();
 			// match =
 			// match.substring(match.indexOf("\n"),
 			// match.length());

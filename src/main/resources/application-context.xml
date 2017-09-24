@@ -58,6 +58,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
 	<bean id="start3" class="local.projects.betting.Start3" />
 
-	<bean id="start4" class="local.projects.betting.Start4" />
+<!-- 	<bean id="start4" class="local.projects.betting.Start4" /> -->
 
 </beans>
