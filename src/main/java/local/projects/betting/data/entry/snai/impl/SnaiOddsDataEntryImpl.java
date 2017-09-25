@@ -83,8 +83,8 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 									// Populating Odds Map to write in data
 									result.put(i, odds);
 									oddsDao.create(odds);
-									LOGGER.info("-------> Saved odds: " + odds.getHomeTeamName().getName() + "-"
-											+ odds.getAwayTeamName().getName());
+									LOGGER.info("-------> Saved odds: " + odds + "-"
+											+ odds.getAwayTeamName());
 								}
 							}
 						} else {
@@ -140,8 +140,8 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 			Double over = new Double(format.parse(userTable.get("OVER").getText()).doubleValue());
 			Double gol = new Double(format.parse(userTable.get("GOL").getText()).doubleValue());
 			Double noGol = new Double(format.parse(userTable.get("NOGOL").getText()).doubleValue());
-			Team team1 = new Team(match.substring(6, match.indexOf("-") - 1).trim());
-			Team team2 = new Team(match.substring(match.indexOf("-") + 1, match.length()).trim());
+			String team1 = match.substring(6, match.indexOf("-") - 1).trim();
+			String team2 = match.substring(match.indexOf("-") + 1, match.length()).trim();
 			Odds odds = new Odds(home, draw, away, under, over, gol, noGol);
 			fixture = new Fixture(oddsDate, team1, team2, odds, league);
 		} catch (ParseException e) {

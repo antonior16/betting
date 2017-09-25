@@ -25,15 +25,15 @@ public class ResultDaoJdbcTemplateImpl implements ResultDao {
 	@Override
 	public void create(Fixture fixture) {
 		// Saving only match having Odds
-		LOGGER.debug(fixture.getHomeTeamName() + " : " + fixture.getAwayTeamName().getName());
+		LOGGER.debug(fixture.getHomeTeamName() + " : " + fixture.getAwayTeamName());
 		String SQL = "insert into risultati (data_partita,Casa, Trasferta, Risultato, Segno, gol_nogol, under_over,multigol_2_4, multigol_2_3) values (?, ?, ?, ?, ?, ?,?,?,?)";
 		LOGGER.info(fixture.toString());
-		int resultId = jdbcTemplate.update(SQL, fixture.getMatchDate(), fixture.getHomeTeamName().getName(),
-				fixture.getAwayTeamName().getName(), fixture.getResult().getSign(), fixture.getResult().getScore(),
+		int resultId = jdbcTemplate.update(SQL, fixture.getMatchDate(), fixture.getHomeTeamName(),
+				fixture.getAwayTeamName(), fixture.getResult().getSign(), fixture.getResult().getScore(),
 				fixture.getResult().getGoalNoGol(), fixture.getResult().getUnderOver(),
 				fixture.getResult().getIs2To4Multigol(), fixture.getResult().getIs2To3Multigol());
-		LOGGER.info("Created Record " + resultId + " Home = " + fixture.getHomeTeamName().getName() + " Away = "
-				+ fixture.getAwayTeamName().getName());
+		LOGGER.info("Created Record " + resultId + " Home = " + fixture.getHomeTeamName() + " Away = "
+				+ fixture.getAwayTeamName());
 	}
 
 	@Override

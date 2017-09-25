@@ -102,9 +102,9 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 			// {
 			if (score != null) {
 				String time = userTable.get("time").getText();
-				Team home = new Team(userTable.get("home").getText().trim());
-				Team away = new Team(userTable.get("away").getText().trim());
-				LOGGER.info("----------->" + home.getName());
+				String home = userTable.get("home").getText().trim();
+				String away = userTable.get("away").getText().trim();
+				LOGGER.info("----------->" + home);
 				Integer goalsHomeTeam = Integer.parseInt(score.substring(0, score.indexOf(":") - 1));
 				Integer goalsAwayTeam = Integer.parseInt(score.substring(score.indexOf(":") + 2, score.length()));
 				// Populating Oddss Map to write in data model (e.g
@@ -113,7 +113,7 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 
 				Result result = new Result(goalsHomeTeam, goalsAwayTeam);
 				fixture = new Fixture(scoreDate, home, away, result, league);
-				LOGGER.debug(home.getName() + " - " + away.getName() + " score has been added ");
+				LOGGER.debug(home + " - " + away + " score has been added ");
 			}
 		}
 		return fixture;

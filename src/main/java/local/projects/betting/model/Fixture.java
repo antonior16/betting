@@ -3,11 +3,14 @@ package local.projects.betting.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Fixture implements Serializable {
 	private static final long serialVersionUID = -1259418107263305560L;
+	private String status;
 	private String match;
-	private Team homeTeamName;
-	private Team awayTeamName;
+	private String homeTeamName;
+	private String awayTeamName;
 	private Date matchDate;
 	private Result result;
 	private Odds odds;
@@ -16,7 +19,7 @@ public class Fixture implements Serializable {
 	public Fixture() {
 	}
 
-	public Fixture(String match, Team homeTeamName, Team awayTeamName, Date matchDate, Result result, Odds odds,
+	public Fixture(String match, String homeTeamName, String awayTeamName, Date matchDate, Result result, Odds odds,
 			League league) {
 		super();
 		this.match = match;
@@ -28,7 +31,7 @@ public class Fixture implements Serializable {
 		this.league = league;
 	}
 
-	public Fixture(Date matchDate, Team homeTeamName, Team awayTeamName, Odds odds, League league) {
+	public Fixture(Date matchDate, String homeTeamName, String awayTeamName, Odds odds, League league) {
 		super();
 		this.matchDate = matchDate;
 		this.homeTeamName = homeTeamName;
@@ -37,7 +40,7 @@ public class Fixture implements Serializable {
 		this.league = league;
 	}
 
-	public Fixture(Date matchDate, Team homeTeamName, Team awayTeamName, Result result, League league) {
+	public Fixture(Date matchDate, String homeTeamName, String awayTeamName, Result result, League league) {
 		super();
 		this.matchDate = matchDate;
 		this.homeTeamName = homeTeamName;
@@ -54,19 +57,19 @@ public class Fixture implements Serializable {
 		this.match = match;
 	}
 
-	public Team getHomeTeamName() {
+	public String getHomeTeamName() {
 		return homeTeamName;
 	}
 
-	public void setHomeTeamName(Team homeTeamName) {
+	public void setHomeTeamName(String homeTeamName) {
 		this.homeTeamName = homeTeamName;
 	}
 
-	public Team getAwayTeamName() {
+	public String getAwayTeamName() {
 		return awayTeamName;
 	}
 
-	public void setAwayTeamName(Team awayTeamName) {
+	public void setAwayTeamName(String awayTeamName) {
 		this.awayTeamName = awayTeamName;
 	}
 
@@ -74,6 +77,7 @@ public class Fixture implements Serializable {
 		return matchDate;
 	}
 
+	@JsonProperty("date")
 	public void setMatchDate(Date matchDate) {
 		this.matchDate = matchDate;
 	}
@@ -102,4 +106,11 @@ public class Fixture implements Serializable {
 		this.league = league;
 	}
 
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 }

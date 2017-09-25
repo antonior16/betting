@@ -23,11 +23,11 @@ public class OddsDaoJdbcTemplateImpl implements OddsDao {
 
 	@Override
 	public void create(Fixture fixture) {
-		LOGGER.debug("Inserting :" + fixture.getHomeTeamName() + " : " + fixture.getAwayTeamName().getName());
+		LOGGER.debug("Inserting :" + fixture.getHomeTeamName() + " : " + fixture.getAwayTeamName());
 		String SQL = "insert into quote (DataPartita,Casa, Trasferta, S1 , SX , S2, Under, Over, Gol, NoGol) values (?,?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		LOGGER.info(fixture.toString());
-		int oddsId = jdbcTemplate.update(SQL, fixture.getMatchDate(), fixture.getHomeTeamName().getName(),
-				fixture.getAwayTeamName().getName(), fixture.getOdds().getHomeWin(), fixture.getOdds().getDraw(),
+		int oddsId = jdbcTemplate.update(SQL, fixture.getMatchDate(), fixture.getHomeTeamName(),
+				fixture.getAwayTeamName(), fixture.getOdds().getHomeWin(), fixture.getOdds().getDraw(),
 				fixture.getOdds().getAwayWin(), fixture.getOdds().getUnder(), fixture.getOdds().getOver(),
 				fixture.getOdds().getGol(), fixture.getOdds().getNoGol());
 
@@ -35,10 +35,10 @@ public class OddsDaoJdbcTemplateImpl implements OddsDao {
 				+ fixture.getAwayTeamName() + "in quote");
 
 		SQL = "insert into partite (Data_Partita,Casa, Trasferta, S1 , SX , S2, Under, Over, Gol, NoGol) values (?,?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		jdbcTemplate.update(SQL, fixture.getMatchDate(), fixture.getHomeTeamName().getName(),
-				fixture.getAwayTeamName().getName(), fixture.getOdds().getHomeWin(), fixture.getOdds().getDraw(),
-				fixture.getOdds().getAwayWin(), fixture.getOdds().getUnder(), fixture.getOdds().getOver(),
-				fixture.getOdds().getGol(), fixture.getOdds().getNoGol());
+		jdbcTemplate.update(SQL, fixture.getMatchDate(), fixture.getHomeTeamName(), fixture.getAwayTeamName(),
+				fixture.getOdds().getHomeWin(), fixture.getOdds().getDraw(), fixture.getOdds().getAwayWin(),
+				fixture.getOdds().getUnder(), fixture.getOdds().getOver(), fixture.getOdds().getGol(),
+				fixture.getOdds().getNoGol());
 		LOGGER.info("Created Record " + oddsId + "for: " + "Home = " + fixture.getHomeTeamName() + " Away = "
 				+ fixture.getAwayTeamName() + "in partite");
 	}
