@@ -9,6 +9,9 @@
 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 	<context:component-scan base-package="local.projects.betting" />
+
+	<import resource="classpath:rest-client-config.xml" />
+
 	<!-- Initialization for data source -->
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -58,6 +61,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
 	<bean id="start3" class="local.projects.betting.Start3" />
 
-<!-- 	<bean id="start4" class="local.projects.betting.Start4" /> -->
+	<!-- <bean id="start4" class="local.projects.betting.Start4" /> -->
 
 </beans>
