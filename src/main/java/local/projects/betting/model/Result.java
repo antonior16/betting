@@ -25,7 +25,7 @@ public class Result implements Serializable {
 		this.goalsHomeTeam = goalsHomeTeam;
 		this.goalsAwayTeam = goalsAwayTeam;
 	}
-	
+
 	public Result(int goalsHomeTeam, int goalsAwayTeam) {
 		buildResult(goalsHomeTeam, goalsAwayTeam);
 		this.goalsHomeTeam = goalsHomeTeam;
@@ -108,7 +108,7 @@ public class Result implements Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -122,7 +122,7 @@ public class Result implements Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -141,14 +141,8 @@ public class Result implements Serializable {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Result [goalsHomeTeam=" + goalsHomeTeam + ", goalsAwayTeam=" + goalsAwayTeam + "]";
+	public void buildResult() {
+		buildResult(this.goalsHomeTeam, this.goalsAwayTeam);
 	}
 
 	private void buildResult(int goalsHomeTeam, int goalsAwayTeam) {
@@ -196,4 +190,12 @@ public class Result implements Serializable {
 
 		this.score = goalsHomeTeam + ":" + goalsAwayTeam;
 	}
+
+	@Override
+	public String toString() {
+		return "Result [goalsHomeTeam=" + goalsHomeTeam + ",/n goalsAwayTeam=" + goalsAwayTeam + ",/n sign=" + sign
+				+ ",/n goalNoGol=" + goalNoGol + ",/n underOver=" + underOver + ",/n score=" + score + ",/n is2To4Multigol="
+				+ is2To4Multigol + ",/n is2To3Multigol=" + is2To3Multigol + "]";
+	}
+
 }

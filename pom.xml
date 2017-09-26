@@ -19,7 +19,7 @@
 		<org.selenium.firefox.driver.version>2.48.2</org.selenium.firefox.driver.version>
 		<com.fasterxml.jackson.jaxrs>2.0.2</com.fasterxml.jackson.jaxrs>
 		<com.faster.jackson.version>2.6.3</com.faster.jackson.version>
-		<org.apache.cxf.version>2.4.2</org.apache.cxf.version>
+		<org.apache.cxf.version>2.7.4</org.apache.cxf.version>
 		<net.sf.ucanaccess.version>4.0.1</net.sf.ucanaccess.version>
 		<com.fasterxml.jackson.jaxrs.version>2.0.2</com.fasterxml.jackson.jaxrs.version>
 		<org.apache.cxf.core.verision>3.1.0</org.apache.cxf.core.verision>
@@ -83,7 +83,11 @@
 			<artifactId>cxf-rt-rs-client</artifactId>
 			<version>3.2.0</version>
 		</dependency>
-
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.apache.cxf</groupId> -->
+<!-- 			<artifactId>cxf-rt-transports-http-hc</artifactId> -->
+<!-- 			<version>${org.apache.cxf.version}</version> -->
+<!-- 		</dependency> -->
 		<!-- <dependency> -->
 		<!-- <groupId>org.apache.cxf</groupId> -->
 		<!-- <artifactId>cxf-bundle-jaxrs</artifactId> -->

@@ -25,6 +25,7 @@ public class Start3 {
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:application-context.xml");
 		Start3 p = context.getBean(Start3.class);
 		p.fixturesDataExtract.extractResults("2017-09-24");
+		((ClassPathXmlApplicationContext) context).close();
 
 	}
 

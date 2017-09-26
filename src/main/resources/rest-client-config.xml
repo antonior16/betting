@@ -1,0 +1,61 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                         http://www.springframework.org/schema/beans/spring-beans.xsd
+                         http://www.springframework.org/schema/context
+                         http://www.springframework.org/schema/context/spring-context.xsd
+                         http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+                         http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
+                         http://www.springframework.org/schema/util  http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<import resource="classpath:cxf-rest-client-bus-config.xml" />
+
+	<bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
+
+	<util:list id="webClientProviders">
+		<ref bean="jsonProvider" />
+	</util:list>
+
+	<bean id="simpleDateFormat" class="java.text.SimpleDateFormat">
+		<constructor-arg type="java.lang.String" value="yyyy-MM-dd'T'HH:mm:ss'Z'" />
+	</bean>
+
+
+<!-- 	<jaxrs:client id="webClient" address="http://www.football-data.org/v1" -->
+<!-- 		serviceClass="org.apache.cxf.jaxrs.client.WebClient" inheritHeaders="true"> -->
+<!-- 		<jaxrs:headers> -->
+<!-- 			<entry key="Accept" value="application/json" /> -->
+<!-- 			<entry key="Content-Type" value="application/json" /> -->
+<!-- 		</jaxrs:headers> -->
+<!-- 		<jaxrs:providers> -->
+<!-- 			<ref bean="jsonProvider" /> -->
+<!-- 		</jaxrs:providers> -->
+<!-- 	</jaxrs:client> -->
+
+	<bean id="footballDataRestClient" class="org.apache.cxf.jaxrs.client.WebClient"
+		factory-method="create">
+		<constructor-arg type="java.lang.String"
+			value="http://www.football-data.org/v1" />
+		<constructor-arg ref="webClientProviders" />
+	</bean>
+
+	<!-- Hide null fields in json -->
+	<bean
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject" ref="jsonProvider" />
+		<property name="targetMethod" value="configure" />
+		<property name="arguments">
+			<list>
+				<value type="com.fasterxml.jackson.databind.DeserializationFeature">FAIL_ON_UNKNOWN_PROPERTIES</value>
+				<value>false</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
+		<property name="dateFormat" ref="simpleDateFormat" />
+	</bean>
+
+</beans>
