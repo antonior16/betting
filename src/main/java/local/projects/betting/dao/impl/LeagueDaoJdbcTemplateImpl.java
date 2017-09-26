@@ -26,7 +26,7 @@ public class LeagueDaoJdbcTemplateImpl implements LeagueDao {
 	}
 
 	@Override
-	public void create(League league) {
+	public void save(League league) {
 		// TODO Auto-generated method stub
 
 	}

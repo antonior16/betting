@@ -1,4 +1,4 @@
-package local.projects.betting.data.entry.selenium.web.driver.impl;
+package local.projects.betting.data.extract.selenium.web.driver.impl;
 
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
@@ -10,7 +10,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum;
+import local.projects.betting.data.extract.selenium.web.driver.model.WebDriverEnum;
 
 public class SeleniumWebDriverImpl {
   private static final Logger LOGGER = LoggerFactory.getLogger(SeleniumWebDriverImpl.class);

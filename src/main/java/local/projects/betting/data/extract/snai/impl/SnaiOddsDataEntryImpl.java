@@ -1,4 +1,4 @@
-package local.projects.betting.data.entry.snai.impl;
+package local.projects.betting.data.extract.snai.impl;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -19,15 +19,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import local.projects.betting.BettingUtil;
+import local.projects.betting.api.data.extract.OddsDataExtract;
 import local.projects.betting.dao.LeagueDao;
 import local.projects.betting.dao.OddsDao;
-import local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum;
+import local.projects.betting.data.extract.selenium.web.driver.impl.AbstractSeleniumWebDriverDataEntryImpl;
+import local.projects.betting.data.extract.selenium.web.driver.model.WebDriverEnum;
 import local.projects.betting.model.Fixture;
 import local.projects.betting.model.League;
 import local.projects.betting.model.Odds;
-import local.projects.betting.model.Team;
 
-public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
+public class SnaiOddsDataEntryImpl extends AbstractSeleniumWebDriverDataEntryImpl implements OddsDataExtract {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SnaiOddsDataEntryImpl.class);
 	@Autowired
 	public OddsDao oddsDao;
@@ -42,7 +43,6 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 		super(webDriver);
 	}
 
-	@Override
 	public Map<Integer, Fixture> extractOdds() {
 		Map<Integer, Fixture> result = new HashMap<Integer, Fixture>();
 		try {
@@ -82,9 +82,8 @@ public class SnaiOddsDataEntryImpl extends AbstractSnaiDataEntryImpl {
 									Fixture odds = buildFixture(userTable.get(i), league);
 									// Populating Odds Map to write in data
 									result.put(i, odds);
-									oddsDao.create(odds);
-									LOGGER.info("-------> Saved odds: " + odds + "-"
-											+ odds.getAwayTeamName());
+									oddsDao.save(odds);
+									LOGGER.info("-------> Saved odds: " + odds + "-" + odds.getAwayTeamName());
 								}
 							}
 						} else {

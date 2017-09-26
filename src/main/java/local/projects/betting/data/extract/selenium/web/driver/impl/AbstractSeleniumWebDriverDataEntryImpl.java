@@ -1,4 +1,4 @@
-package local.projects.betting.data.entry.selenium.web.driver.impl;
+package local.projects.betting.data.extract.selenium.web.driver.impl;
 
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum;
+import local.projects.betting.data.extract.selenium.web.driver.model.WebDriverEnum;
 
 public class AbstractSeleniumWebDriverDataEntryImpl {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeleniumWebDriverDataEntryImpl.class);

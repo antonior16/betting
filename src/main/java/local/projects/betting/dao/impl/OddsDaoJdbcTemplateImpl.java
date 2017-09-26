@@ -1,7 +1,5 @@
 package local.projects.betting.dao.impl;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +7,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import local.projects.betting.dao.OddsDao;
 import local.projects.betting.model.Fixture;
-import local.projects.betting.model.Odds;
 
 public class OddsDaoJdbcTemplateImpl implements OddsDao {
 	@Autowired
@@ -22,7 +19,7 @@ public class OddsDaoJdbcTemplateImpl implements OddsDao {
 	}
 
 	@Override
-	public void create(Fixture fixture) {
+	public void save(Fixture fixture) {
 		LOGGER.debug("Inserting :" + fixture.getHomeTeamName() + " : " + fixture.getAwayTeamName());
 		String SQL = "insert into quote (DataPartita,Casa, Trasferta, S1 , SX , S2, Under, Over, Gol, NoGol) values (?,?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		LOGGER.info(fixture.toString());
@@ -41,28 +38,6 @@ public class OddsDaoJdbcTemplateImpl implements OddsDao {
 				fixture.getOdds().getNoGol());
 		LOGGER.info("Created Record " + oddsId + "for: " + "Home = " + fixture.getHomeTeamName() + " Away = "
 				+ fixture.getAwayTeamName() + "in partite");
-	}
-
-	@Override
-	public Odds getOdds(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Odds> listOdds() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void delete(Integer id) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void update(Integer id, Integer age) {
 	}
 
 	@Override

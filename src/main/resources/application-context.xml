@@ -27,14 +27,11 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	</bean>
 
 	<bean id="odds"
-		class="local.projects.betting.data.entry.snai.impl.SnaiOddsDataEntryImpl">
-		<!-- <constructor-arg -->
-		<!-- type="local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum" -->
-		<!-- value="PHANTOMJS"></constructor-arg> -->
+		class="local.projects.betting.data.extract.snai.impl.SnaiOddsDataEntryImpl">
 	</bean>
 
 	<bean id="results"
-		class="local.projects.betting.data.entry.diretta.impl.DirettaScoresDataEntryImpl">
+		class="local.projects.betting.data.extract.football.data.impl.FootballDataDataExtractImpl">
 	</bean>
 
 	<bean id="oddsDao" class="local.projects.betting.dao.impl.OddsDaoJdbcTemplateImpl" />

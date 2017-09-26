@@ -9,7 +9,7 @@ public interface LeagueDao {
 	/**
 	 * This is the method to be used to create a record in the League table.
 	 */
-	public void create(League league);
+	public void save(League league);
 
 	/**
 	 * This is the method to be used to list down a record from the League table
@@ -42,5 +42,5 @@ public interface LeagueDao {
 
 	List<League> listLeagues4Results();
 
-	
+
 }

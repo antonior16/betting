@@ -1,4 +1,4 @@
-package local.projects.betting.data.entry.diretta.impl;
+package local.projects.betting.data.extract.diretta.impl;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -18,11 +18,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import local.projects.betting.api.ScoreDataEntry;
+import local.projects.betting.api.data.extract.FixtureDataExtract;
 import local.projects.betting.dao.LeagueDao;
-import local.projects.betting.dao.ResultDao;
-import local.projects.betting.data.entry.selenium.web.driver.impl.AbstractSeleniumWebDriverDataEntryImpl;
-import local.projects.betting.data.entry.selenium.web.driver.model.WebDriverEnum;
+import local.projects.betting.dao.FixtureDao;
+import local.projects.betting.data.extract.selenium.web.driver.impl.AbstractSeleniumWebDriverDataEntryImpl;
+import local.projects.betting.data.extract.selenium.web.driver.model.WebDriverEnum;
 import local.projects.betting.model.Fixture;
 import local.projects.betting.model.League;
 import local.projects.betting.model.Result;
@@ -31,7 +31,7 @@ import local.projects.betting.model.Team;
 /**
  * Hello world!
  */
-public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEntryImpl implements ScoreDataEntry {
+public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEntryImpl implements FixtureDataExtract {
 
 	private Date scoreDate;
 
@@ -39,7 +39,7 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 	private LeagueDao leagueDao;
 
 	@Autowired
-	public ResultDao resultDao;
+	public FixtureDao resultDao;
 
 	public DirettaScoresDataEntryImpl() {
 	}
@@ -52,12 +52,6 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 
 	// Scores datasource
 	private static final String SCORES_URL = "http://www.diretta.it";
-
-	@Override
-	public Map<Integer, Fixture> extractOdds() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public Map<Integer, Fixture> extractResults(String timeFrame) {
@@ -75,7 +69,7 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 						Fixture fixture;
 						try {
 							fixture = buildFixture(userTable.get(i), league);
-							resultDao.create(fixture);
+							resultDao.save(fixture);
 						} catch (ParseException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();

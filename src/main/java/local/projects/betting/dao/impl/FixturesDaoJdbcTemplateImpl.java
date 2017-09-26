@@ -1,35 +1,30 @@
 package local.projects.betting.dao.impl;
 
-import java.util.Date;
-import java.util.Map;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import local.projects.betting.dao.FixturesDao;
-import local.projects.betting.model.League;
+import local.projects.betting.model.Fixture;
 
 public class FixturesDaoJdbcTemplateImpl implements FixturesDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(FixturesDaoJdbcTemplateImpl.class);
+
 	@Override
-	public Map<League, Date> getFixturesWithoutResults() {
-		String sql = "SELECT partite_risultati.Data_Partita, partite_risultati.Casa, partite_risultati.Trasferta, partite_risultati.name, partite_risultati.url, partite_risultati.campionato FROM partite_risultati LEFT JOIN risultati ON (partite_risultati.Data_Partita = risultati.data_partita) AND (partite_risultati.Casa = risultati.Casa) WHERE (((risultati.Casa) Is Null)) GROUP BY partite_risultati.Data_Partita, partite_risultati.Casa, partite_risultati.Trasferta, partite_risultati.name, partite_risultati.url, partite_risultati.campionato ORDER BY partite_risultati.campionato;";
-
-//		return jdbcTemplate.query(sql, new RowMapper<Odds>() {
-//			@Override
-//			public Odds mapRow(ResultSet rs, int rowNum) throws SQLException {
-//				Odds odds = new Odds();
-//				odds.setOddsDate(rs.getDate("Data_Partita"));
-//				odds.setHomeTeamName(new Team(rs.getString("Casa")));
-//				odds.setAwayTeamName(new Team(rs.getString("Trasferta")));
-//				return odds;
-//			}
-//		});		
-		return null;
+	public void save(Fixture fixture) {
+		// Saving only match having Odds
+		LOGGER.debug(fixture.getHomeTeamName() + " : " + fixture.getAwayTeamName());
+		String SQL = "insert into risultati (data_partita,Casa, Trasferta, Risultato, Segno, gol_nogol, under_over,multigol_2_4, multigol_2_3) values (?, ?, ?, ?, ?, ?,?,?,?)";
+		LOGGER.info(fixture.toString());
+		int resultId = jdbcTemplate.update(SQL, fixture.getMatchDate(), fixture.getHomeTeamName(),
+				fixture.getAwayTeamName(), fixture.getResult().getSign(), fixture.getResult().getScore(),
+				fixture.getResult().getGoalNoGol(), fixture.getResult().getUnderOver(),
+				fixture.getResult().getIs2To4Multigol(), fixture.getResult().getIs2To3Multigol());
+		LOGGER.info("Created Record " + resultId + " Home = " + fixture.getHomeTeamName() + " Away = "
+				+ fixture.getAwayTeamName());
 	}
-
-
-
 }
