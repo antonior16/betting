@@ -28,22 +28,22 @@ import local.projects.betting.model.Fixture;
 import local.projects.betting.model.League;
 import local.projects.betting.model.Odds;
 
-public class SnaiOddsDataEntryImpl extends AbstractSeleniumWebDriverDataEntryImpl implements OddsDataExtract {
-	private static final Logger LOGGER = LoggerFactory.getLogger(SnaiOddsDataEntryImpl.class);
+public class SnaiOddsDataExtractImpl extends AbstractSeleniumWebDriverDataEntryImpl implements OddsDataExtract {
+	private static final Logger LOGGER = LoggerFactory.getLogger(SnaiOddsDataExtractImpl.class);
 	@Autowired
 	public OddsDao oddsDao;
 
 	@Autowired
 	private LeagueDao leagueDao;
 
-	public SnaiOddsDataEntryImpl() {
+	public SnaiOddsDataExtractImpl() {
 	}
 
-	public SnaiOddsDataEntryImpl(WebDriverEnum webDriver) {
+	public SnaiOddsDataExtractImpl(WebDriverEnum webDriver) {
 		super(webDriver);
 	}
 
-	public Map<Integer, Fixture> extractOdds() {
+	public Map<Integer, Fixture> extractOdds(League l) {
 		Map<Integer, Fixture> result = new HashMap<Integer, Fixture>();
 		try {
 			oddsDao.clearMatch();

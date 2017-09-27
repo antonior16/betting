@@ -1,0 +1,68 @@
+http://api.football-data.org/v1/fixtures?timeFrameStart=2017-09-24&timeFrameEnd=2017-09-24
+
+http://api.football-data.org/v1/competitions/456/fixtures?timeFrameStart=2017-09-24&timeFrameEnd=2017-09-24
+
+
+"id": 456,
+"caption": "Serie A 2017/18",
+"league": "SA",
+"year": "2017",
+"currentMatchday": 6,
+"numberOfMatchdays": 38,
+"numberOfTeams": 20,
+"numberOfGames": 380,
+"lastUpdated": "2017-09-24T20:50:13Z"
+
+
+id": 459,
+"caption": "Serie B 2017/18",
+"league": "SB",
+"year": "2017",
+"currentMatchday": 6,
+"numberOfMatchdays": 42,
+"numberOfTeams": 22,
+"numberOfGames": 462,
+"lastUpdated": "2017-09-24T17:40:11Z"
+
+"id": 445,
+"caption": "Premier League 2017/18",
+"league": "PL",
+"year": "2017",
+"currentMatchday": 6,
+"numberOfMatchdays": 38,
+"numberOfTeams": 20,
+"numberOfGames": 380,
+"lastUpdated": "2017-09-24T17:00:20Z"
+
+
+id": 452,
+"caption": "1. Bundesliga 2017/18",
+"league": "BL1",
+"year": "2017",
+"currentMatchday": 6,
+"numberOfMatchdays": 34,
+"numberOfTeams": 18,
+"numberOfGames": 306,
+"lastUpdated": "2017-09-24T18:00:21Z"
+
+
+"id": 450,
+"caption": "Ligue 1 2017/18",
+"league": "FL1",
+"year": "2017",
+"currentMatchday": 7,
+"numberOfMatchdays": 38,
+"numberOfTeams": 20,
+"numberOfGames": 380,
+"lastUpdated": "2017-09-24T21:10:17Z"
+
+
+"id": 455,
+"caption": "Primera Division 2017",
+"league": "PD",
+"year": "2017",
+"currentMatchday": 6,
+"numberOfMatchdays": 38,
+"numberOfTeams": 20,
+"numberOfGames": 380,
+"lastUpdated": "2017-09-24T20:50:10Z"

@@ -13,9 +13,6 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.cxf.interceptor.LoggingInInterceptor;
-import org.apache.cxf.interceptor.LoggingOutInterceptor;
-import org.apache.cxf.jaxrs.client.ClientConfiguration;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +23,9 @@ import local.projects.betting.dao.FixtureDao;
 import local.projects.betting.dao.LeagueDao;
 import local.projects.betting.data.extract.selenium.web.driver.model.WebDriverEnum;
 import local.projects.betting.model.Fixture;
+import local.projects.betting.model.League;
 import local.projects.betting.model.json.FixturesCollection;
 
-/**
- * Hello world!
- */
 public class FootballDataDataExtractImpl implements FixtureDataExtract {
 	@Resource
 	private WebClient footballDataRestClient;
@@ -52,30 +47,34 @@ public class FootballDataDataExtractImpl implements FixtureDataExtract {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FootballDataDataExtractImpl.class);
 
 	@Override
-	public Map<Integer, Fixture> extractResults(String timeFrame) {
+	public Map<Integer, Fixture> extractResults(League league, String timeFrame) {
 		Map<Integer, Fixture> result = new HashMap<Integer, Fixture>();
 
-		ClientConfiguration config = WebClient.getConfig(footballDataRestClient);
-
-		footballDataRestClient.path("/competitions/456/fixtures").accept(MediaType.APPLICATION_JSON_TYPE);
+		LOGGER.info("Define path for " + league.getName() + ":" + league.getScoresUrl());
+		footballDataRestClient.path(null);
+		footballDataRestClient.path(league.getScoresUrl()).accept(MediaType.APPLICATION_JSON_TYPE);
 		footballDataRestClient.query("timeFrameStart", timeFrame);
 		footballDataRestClient.query("timeFrameEnd", timeFrame);
+		try {
+			FixturesCollection fixturesCollection = footballDataRestClient.get(FixturesCollection.class);
 
-		FixturesCollection fixturesCollection = footballDataRestClient.get(FixturesCollection.class);
+			List<Fixture> fixturesList = fixturesCollection.getFixtures();
 
-		List<Fixture> fixturesList = fixturesCollection.getFixtures();
-
-		if (fixturesList != null && !fixturesList.isEmpty()) {
-
-			for (Fixture fixture : fixturesList) {
-				fixture.getResult().buildResult();
-				resultDao.save(fixture);
-				LOGGER.info("Saved fixture for: " + fixture.getHomeTeamName() + "-" + fixture.getAwayTeamName()
-						+ fixture.getResult().toString());
+			if (fixturesList != null && !fixturesList.isEmpty()) {
+				for (Fixture fixture : fixturesList) {
+					fixture.getResult().buildResult();
+					resultDao.save(fixture);
+					LOGGER.info("Saved fixture for: " + fixture.getHomeTeamName() + "-" + fixture.getAwayTeamName()
+							+ fixture.getResult().toString());
+				}
 			}
+			leagueDao.updateLastScoreDate(league.getLeagueId(), null);
+		} catch (Exception e) {
+			LOGGER.error("An exception has occurred getting fixtures from: " + footballDataRestClient.getBaseURI().getPath() + "/"
+					+ footballDataRestClient.getBaseURI().getPath());
+			throw e;
 		}
 		return result;
-
 	}
 
 	private Date getResultDate(String time) throws ParseException {

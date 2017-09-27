@@ -54,31 +54,29 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 	private static final String SCORES_URL = "http://www.diretta.it";
 
 	@Override
-	public Map<Integer, Fixture> extractResults(String timeFrame) {
+	public Map<Integer, Fixture> extractResults(League league, String timeFrame) {
 
 		Map<Integer, Fixture> results = new HashMap<Integer, Fixture>();
 		List<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
 		try {
-			for (League league : leagueDao.listLeagues4Results()) {
-				driver.get(league.getScoresUrl());
-				// Check the title of the page
-				LOGGER.info("Page title is: " + driver.getTitle());
-				userTable.addAll(extractRowFromHtmlTable(league));
-				if (!userTable.isEmpty()) {
-					for (int i = 0; i < userTable.size(); i++) {
-						Fixture fixture;
-						try {
-							fixture = buildFixture(userTable.get(i), league);
-							resultDao.save(fixture);
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+			driver.get(league.getScoresUrl());
+			// Check the title of the page
+			LOGGER.info("Page title is: " + driver.getTitle());
+			userTable.addAll(extractRowFromHtmlTable(league));
+			if (!userTable.isEmpty()) {
+				for (int i = 0; i < userTable.size(); i++) {
+					Fixture fixture;
+					try {
+						fixture = buildFixture(userTable.get(i), league);
+						resultDao.save(fixture);
+					} catch (ParseException e) {
+						LOGGER.error("An exception has occurred " + e.getMessage());
 					}
-					leagueDao.updateLastScoreDate(league.getLeagueId(), null);
 				}
-				LOGGER.info("No Scores found for " + league.getName() + " " + "on " + league.getScoresUrl());
+				leagueDao.updateLastScoreDate(league.getLeagueId(), null);
 			}
+			LOGGER.info("No Scores found for " + league.getName() + " " + "on " + league.getScoresUrl());
+
 		} catch (Exception e) {
 			LOGGER.error("Error parsing element ", e);
 		} finally {
