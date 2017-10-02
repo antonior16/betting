@@ -1,0 +1,100 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+   http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+
+	<!-- Chrome Capabiliies -->
+	<util:map id="capabilitiesMap" map-class="java.util.HashMap">
+		<entry key="binary" value="C:\Program Files (x86)\Google\Chrome\Application" />
+	</util:map>
+
+	<bean id="capabilities" class="org.openqa.selenium.remote.DesiredCapabilities">
+		<constructor-arg ref="capabilitiesMap" />
+	</bean>
+
+	<!-- Chrome Options -->
+	<bean id="chromeOptions" class="org.openqa.selenium.chrome.ChromeOptions" />
+
+	<bean id="chromeOptionsSysProperty"
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject" ref="chromeOptions" />
+		<property name="targetMethod">
+			<value>setBinary</value>
+		</property>
+		<property name="arguments">
+			<value>chromedriver.exe</value>
+		</property>
+	</bean>
+
+	<bean id="chromeOptionsSilent"
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetObject" ref="chromeOptions" />
+		<property name="targetMethod">
+			<value>addArguments</value>
+		</property>
+		<property name="arguments">
+			<value>--headless</value>
+		</property>
+	</bean>
+
+
+	<bean id="chrome-driver" class="org.openqa.selenium.chrome.ChromeDriver"
+		destroy-method="quit" lazy-init="true">
+		<constructor-arg ref="capabilities" />
+	</bean>
+
+	<!-- System Properties -->
+	<bean id="driverPathSysProperty"
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetClass">
+			<value>java.lang.System</value>
+		</property>
+		<property name="targetMethod">
+			<value>setProperty</value>
+		</property>
+		<property name="arguments">
+			<list>
+				<value>webdriver.chrome.driver</value>
+				<value>chromedriver.exe</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="disableLoggingSysProperty"
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetClass">
+			<value>java.lang.System</value>
+		</property>
+		<property name="targetMethod">
+			<value>setProperty</value>
+		</property>
+		<property name="arguments">
+			<list>
+				<value>webdriver.chrome.args</value>
+				<value>--disable-logging</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="silentOuptputSysProperty"
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetClass">
+			<value>java.lang.System</value>
+		</property>
+		<property name="targetMethod">
+			<value>setProperty</value>
+		</property>
+		<property name="arguments">
+			<list>
+				<value>webdriver.chrome.silentOutput</value>
+				<value>true</value>
+			</list>
+		</property>
+	</bean>
+</beans>

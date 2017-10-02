@@ -1,7 +1,9 @@
 package local.projects.betting;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -13,9 +15,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
 import local.projects.betting.api.data.extract.FixtureDataExtract;
-import local.projects.betting.api.data.extract.LeagueDataExtract;
 import local.projects.betting.api.data.extract.OddsDataExtract;
+import local.projects.betting.dao.FixtureDao;
 import local.projects.betting.dao.LeagueDao;
+import local.projects.betting.dao.OddsDao;
+import local.projects.betting.model.Fixture;
 import local.projects.betting.model.League;
 
 @Component
@@ -27,10 +31,13 @@ public class Start3 {
 	private FixtureDataExtract fixturesDataExtract;
 
 	@Autowired
-	private LeagueDataExtract LeagueDataExtract;
+	private LeagueDao leagueDao;
 
 	@Autowired
-	private LeagueDao leagueDao;
+	private OddsDao oddsDao;
+
+	@Autowired
+	private FixtureDao fixtureDao;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Start3.class);
 
@@ -38,13 +45,10 @@ public class Start3 {
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:application-context.xml");
 		try {
 			Start3 p = context.getBean(Start3.class);
-			// p.extractOdds();
-			//p.extractFixtures();
-			p.extractLeagues();
-
-
+			p.extractFixtures();
+			p.extractOdds();
 		} catch (Exception e) {
-			LOGGER.error("An Exception has occurred: ", e.getMessage());
+			LOGGER.error("An Exception has occurred: ", e);
 		} finally {
 			((ClassPathXmlApplicationContext) context).close();
 		}
@@ -55,46 +59,49 @@ public class Start3 {
 	 * Client for extract matchday odds
 	 */
 	public void extractOdds() {
-		oddsDataExtract.extractOdds(null);
+		List<Fixture> fixtures = new ArrayList<Fixture>();
+		// Clear Odds Table
+		oddsDao.clearMatch();
+
+		// Retrieving leagues with match on this day
+		List<League> leagues = leagueDao.listLeagues();
+
+		// Extract Odds for found leagues
+		for (League league : leagues) {
+			fixtures.addAll(oddsDataExtract.extractOdds(league));
+		}
+
+		// persist odds
+		if (fixtures != null && !fixtures.isEmpty()) {
+			persistOdds(fixtures);
+		}
 	}
 
 	public void extractFixtures() {
+		// Extract fixturee
 		for (League league : leagueDao.listLeagues4Results()) {
 			Date lastResultsUpdate = league.getLastResultsUpdate();
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			String fixtureDate = simpleDateFormat.format(lastResultsUpdate);
 
-			fixturesDataExtract.extractResults(league, fixtureDate);
+			List<Fixture> fixtures = fixturesDataExtract.extractFixtures(league, fixtureDate);
+
+			// Persist fixtures
+			for (Fixture fixture : fixtures) {
+				fixtureDao.save(fixture);
+				LOGGER.info("Saved fixture for: " + fixture.getHomeTeamName() + "-" + fixture.getAwayTeamName()
+						+ fixture.getResult().toString());
+			}
+			// After syncing both Odds and Fixtures set next mathc day
+			// Date nextOddsDate = leagueDataExtract.getNextOddsDate(leagueId);
+			// leagueDao.updateNextMatchDay(leagueId, nextOddsDate);
 		}
 	}
 
-	public void extractLeagues() {
-
-			LeagueDataExtract.getNextOddsDate(new Long(1));
-	}
-
-	public OddsDataExtract getOddsDataExtract() {
-		return oddsDataExtract;
-	}
-
-	public void setOddsDataExtract(OddsDataExtract oddsDataExtract) {
-		this.oddsDataExtract = oddsDataExtract;
-	}
-
-	public FixtureDataExtract getFixturesDataExtract() {
-		return fixturesDataExtract;
-	}
-
-	public void setFixturesDataExtract(FixtureDataExtract fixturesDataExtract) {
-		this.fixturesDataExtract = fixturesDataExtract;
-	}
-
-	public LeagueDao getLeagueDao() {
-		return leagueDao;
-	}
-
-	public void setLeagueDao(LeagueDao leagueDao) {
-		this.leagueDao = leagueDao;
+	public void persistOdds(List<Fixture> fixtures) {
+		for (Fixture fixture : fixtures) {
+			oddsDao.save(fixture);
+		}
 	}
 
 }

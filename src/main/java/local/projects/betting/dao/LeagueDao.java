@@ -34,7 +34,7 @@ public interface LeagueDao {
 	 */
 	public void update(League league);
 
-	void updateLastScoreDate(Long leagueId, Date date);
+	void updateNextMatchDay(Long leagueId, Date date);
 
 	public void updateLastOddsDate(Long leagueId, Date date);
 

@@ -2,6 +2,9 @@
  *
  */
 package local.projects.betting.api.data.extract;
+
+import java.util.Date;
+
 public interface LeagueDataExtract {
-	public void getNextOddsDate(Long leagueId);
+	public Date getNextOddsDate(Long leagueId);
 }

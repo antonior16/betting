@@ -3,11 +3,10 @@ package local.projects.betting.data.extract.football.data.impl;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -47,11 +46,11 @@ public class FootballDataDataExtractImpl implements FixtureDataExtract {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FootballDataDataExtractImpl.class);
 
 	@Override
-	public Map<Integer, Fixture> extractResults(League league, String timeFrame) {
-		Map<Integer, Fixture> result = new HashMap<Integer, Fixture>();
+	public List<Fixture> extractFixtures(League league, String timeFrame) {
+		List<Fixture> result = new ArrayList<Fixture>();
 
 		LOGGER.info("Define path for " + league.getName() + ":" + league.getScoresUrl());
-		footballDataRestClient.path(null);
+		//footballDataRestClient.path(null);
 		footballDataRestClient.path(league.getScoresUrl()).accept(MediaType.APPLICATION_JSON_TYPE);
 		footballDataRestClient.query("timeFrameStart", timeFrame);
 		footballDataRestClient.query("timeFrameEnd", timeFrame);
@@ -63,15 +62,13 @@ public class FootballDataDataExtractImpl implements FixtureDataExtract {
 			if (fixturesList != null && !fixturesList.isEmpty()) {
 				for (Fixture fixture : fixturesList) {
 					fixture.getResult().buildResult();
-					resultDao.save(fixture);
-					LOGGER.info("Saved fixture for: " + fixture.getHomeTeamName() + "-" + fixture.getAwayTeamName()
-							+ fixture.getResult().toString());
+					result.add(fixture);
 				}
 			}
-			leagueDao.updateLastScoreDate(league.getLeagueId(), null);
 		} catch (Exception e) {
-			LOGGER.error("An exception has occurred getting fixtures from: " + footballDataRestClient.getBaseURI().getPath() + "/"
-					+ footballDataRestClient.getBaseURI().getPath());
+			LOGGER.error(
+					"An exception has occurred getting fixtures from: " + footballDataRestClient.getBaseURI().getPath()
+							+ "/" + footballDataRestClient.getBaseURI().getPath());
 			throw e;
 		}
 		return result;

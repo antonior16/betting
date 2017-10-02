@@ -11,6 +11,7 @@ public class Fixture implements Serializable {
 	private String match;
 	private String homeTeamName;
 	private String awayTeamName;
+	@JsonProperty("date")
 	private Date matchDate;
 	private Result result;
 	private Odds odds;

@@ -11,55 +11,22 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	<context:component-scan base-package="local.projects.betting" />
 
 	<import resource="classpath:rest-client-config.xml" />
+	<import resource="classpath:persistence-layer-application-context.xml" />
+	<import resource="classpath:selenium-chrome-config.xml"/>
 
-	<!-- Initialization for data source -->
-	<bean id="dataSource"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="net.ucanaccess.jdbc.UcanaccessDriver" />
-		<property name="url"
-			value="jdbc:ucanaccess://#{ systemProperties['user.dir'] }/Database1.accdb" />
-		<property name="username" value="" />
-		<property name="password" value="" />
-	</bean>
 
-	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-		<property name="dataSource" ref="dataSource"></property>
-	</bean>
+		<bean id="oddsExtract"
+			class="local.projects.betting.data.extract.snai.impl.SnaiOddsDataExtractImpl">
+		</bean>
 
-	<bean id="oddsExtract"
-		class="local.projects.betting.data.extract.snai.impl.SnaiOddsDataExtractImpl">
-	</bean>
+		<bean id="resultsExtract"
+			class="local.projects.betting.data.extract.football.data.impl.FootballDataDataExtractImpl">
+		</bean>
 
-	<bean id="resultsExtract"
-		class="local.projects.betting.data.extract.football.data.impl.FootballDataDataExtractImpl">
-	</bean>
+		<bean id="leagueExtract"
+			class="local.projects.betting.data.extract.football.data.impl.LeagueFootballDataDataExtractImpl" />
 
-	<bean id="oddsDao" class="local.projects.betting.dao.impl.OddsDaoJdbcTemplateImpl" />
+		<bean id="start3" class="local.projects.betting.Start3" />
 
-	<bean id="resultDao"
-		class="local.projects.betting.dao.impl.ResultDaoJdbcTemplateImpl" />
-
-	<bean id="leagueExtract" class="LeagueFootballDataDataExtractImpl" />
-
-	<bean id="leagueDao"
-		class="local.projects.betting.dao.impl.LeagueDaoJdbcTemplateImpl" />
-
-	<bean id="systemPrereqs"
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="targetObject" value="#{@systemProperties}" />
-		<property name="targetMethod" value="putAll" />
-		<property name="arguments">
-			<!-- The new Properties -->
-			<util:properties>
-				<prop key="phantomjs.binary.path">phantomjs-2.1.1-windows/bin/phantomjs.exe</prop>
-			</util:properties>
-		</property>
-	</bean>
-
-	<bean id="driver" class="org.openqa.selenium.phantomjs.PhantomJSDriver" />
-
-	<bean id="start3" class="local.projects.betting.Start3" />
-
-	<!-- <bean id="start4" class="local.projects.betting.Start4" /> -->
 
 </beans>

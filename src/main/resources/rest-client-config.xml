@@ -12,7 +12,7 @@
 
 	<import resource="classpath:cxf-rest-client-bus-config.xml" />
 
-	<bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
+	<bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
 
 	<util:list id="webClientProviders">
 		<ref bean="jsonProvider" />
@@ -23,19 +23,19 @@
 	</bean>
 
 
-<!-- 	<jaxrs:client id="webClient" address="http://www.football-data.org/v1" -->
-<!-- 		serviceClass="org.apache.cxf.jaxrs.client.WebClient" inheritHeaders="true"> -->
-<!-- 		<jaxrs:headers> -->
-<!-- 			<entry key="Accept" value="application/json" /> -->
-<!-- 			<entry key="Content-Type" value="application/json" /> -->
-<!-- 		</jaxrs:headers> -->
-<!-- 		<jaxrs:providers> -->
-<!-- 			<ref bean="jsonProvider" /> -->
-<!-- 		</jaxrs:providers> -->
-<!-- 	</jaxrs:client> -->
+	<!-- <jaxrs:client id="webClient" address="http://www.football-data.org/v1" -->
+	<!-- serviceClass="org.apache.cxf.jaxrs.client.WebClient" inheritHeaders="true"> -->
+	<!-- <jaxrs:headers> -->
+	<!-- <entry key="Accept" value="application/json" /> -->
+	<!-- <entry key="Content-Type" value="application/json" /> -->
+	<!-- </jaxrs:headers> -->
+	<!-- <jaxrs:providers> -->
+	<!-- <ref bean="jsonProvider" /> -->
+	<!-- </jaxrs:providers> -->
+	<!-- </jaxrs:client> -->
 
 	<bean id="footballDataRestClient" class="org.apache.cxf.jaxrs.client.WebClient"
-		factory-method="create">
+		factory-method="create" scope="prototype">
 		<constructor-arg type="java.lang.String"
 			value="http://www.football-data.org/v1" />
 		<constructor-arg ref="webClientProviders" />

@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
@@ -19,14 +18,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import local.projects.betting.api.data.extract.FixtureDataExtract;
-import local.projects.betting.dao.LeagueDao;
 import local.projects.betting.dao.FixtureDao;
+import local.projects.betting.dao.LeagueDao;
 import local.projects.betting.data.extract.selenium.web.driver.impl.AbstractSeleniumWebDriverDataEntryImpl;
 import local.projects.betting.data.extract.selenium.web.driver.model.WebDriverEnum;
 import local.projects.betting.model.Fixture;
 import local.projects.betting.model.League;
 import local.projects.betting.model.Result;
-import local.projects.betting.model.Team;
 
 /**
  * Hello world!
@@ -54,9 +52,9 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 	private static final String SCORES_URL = "http://www.diretta.it";
 
 	@Override
-	public Map<Integer, Fixture> extractResults(League league, String timeFrame) {
+	public List<Fixture> extractFixtures(League league, String timeFrame) {
 
-		Map<Integer, Fixture> results = new HashMap<Integer, Fixture>();
+		List<Fixture> results = new ArrayList<Fixture>();
 		List<HashMap<String, WebElement>> userTable = new ArrayList<HashMap<String, WebElement>>();
 		try {
 			driver.get(league.getScoresUrl());
@@ -68,19 +66,16 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 					Fixture fixture;
 					try {
 						fixture = buildFixture(userTable.get(i), league);
-						resultDao.save(fixture);
+						results.add(fixture);
 					} catch (ParseException e) {
 						LOGGER.error("An exception has occurred " + e.getMessage());
 					}
 				}
-				leagueDao.updateLastScoreDate(league.getLeagueId(), null);
 			}
 			LOGGER.info("No Scores found for " + league.getName() + " " + "on " + league.getScoresUrl());
 
 		} catch (Exception e) {
 			LOGGER.error("Error parsing element ", e);
-		} finally {
-			driver.quit();
 		}
 		return results;
 	}
@@ -124,7 +119,6 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 	}
 
 	private List<HashMap<String, WebElement>> extractRowFromHtmlTable(League league) throws Exception {
-		WebDriverWait wait = new WebDriverWait(driver, 240);
 		Date lastOddsUpdate = league.getLastOddsUpdate();
 		/*
 		 * Search for previous days
@@ -200,21 +194,5 @@ public class DirettaScoresDataEntryImpl extends AbstractSeleniumWebDriverDataEnt
 		fields.add("space1");
 		fields.add("space2");
 		return fields;
-	}
-
-	private long getDiffDays(String timeFrame) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
-		long dayDiff = 0;
-		try {
-			scoreDate = sdf.parse(timeFrame);
-		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-		long diff = new Date().getTime() - scoreDate.getTime();
-		dayDiff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-
-		return dayDiff;
 	}
 }

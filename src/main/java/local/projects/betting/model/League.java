@@ -3,18 +3,37 @@ package local.projects.betting.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class League implements Serializable {
 	private static final long serialVersionUID = -2308174004403590109L;
 
+	@JsonProperty("id")
 	private Long leagueId;
+	@JsonProperty("caption")
 	private String name;
 	private String oddsUrl;
 	private String scoresUrl;
 	private Date lastOddsUpdate;
+	private int currentMatchDay;
 	private Date lastResultsUpdate;
 
 	public League() {
 	}
+
+	public League(Long leagueId, String name) {
+		this.leagueId = leagueId;
+		this.name = name;
+	}
+
+	public League(Long leagueId, String name, String oddsUrl, String scoresUrl) {
+		this.leagueId = leagueId;
+		this.name = name;
+		this.oddsUrl = oddsUrl;
+		this.scoresUrl = scoresUrl;
+	}
+
+
 
 	public League(Long leagueId, String name, String oddsUrl, String scoresUrl, Date lastOddsUpdate,
 			Date lastResultsUpdate) {
@@ -72,6 +91,14 @@ public class League implements Serializable {
 
 	public void setLastResultsUpdate(Date lastResultsUpdate) {
 		this.lastResultsUpdate = lastResultsUpdate;
+	}
+
+	public int getCurrentMatchDay() {
+		return currentMatchDay;
+	}
+
+	public void setCurrentMatchday(int currentMatchDay) {
+		this.currentMatchDay = currentMatchDay;
 	}
 
 	@Override

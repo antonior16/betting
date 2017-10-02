@@ -1,6 +1,9 @@
 package local.projects.betting.dao;
 
+import java.util.List;
+
 import local.projects.betting.model.Fixture;
+import local.projects.betting.model.League;
 
 public interface OddsDao {
 	/**
@@ -9,4 +12,9 @@ public interface OddsDao {
 	public void save(Fixture fixture);
 
 	public void clearMatch();
+
+	/**
+	 *
+	 */
+	public List<League> getLeagueByOddsMatchDay();
 }

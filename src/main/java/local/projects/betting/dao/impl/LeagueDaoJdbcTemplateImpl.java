@@ -101,7 +101,7 @@ public class LeagueDaoJdbcTemplateImpl implements LeagueDao {
 	}
 
 	@Override
-	public void updateLastScoreDate(Long leagueId, Date date) {
+	public void updateNextMatchDay(Long leagueId, Date date) {
 		String sql = "update Leagues set last_results_update= ? where league_id = ?";
 		// define query arguments
 		Object[] params = { date, leagueId };
