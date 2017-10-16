@@ -26,11 +26,8 @@ import local.projects.betting.model.League;
 import local.projects.betting.model.json.FixturesCollection;
 
 public class FootballDataDataExtractImpl implements FixtureDataExtract {
-	@Resource
-	private WebClient footballDataRestClient;
-
 	@Autowired
-	private LeagueDao leagueDao;
+	private WebClient footballDataRestClient;
 
 	@Autowired
 	public FixtureDao resultDao;
@@ -50,11 +47,13 @@ public class FootballDataDataExtractImpl implements FixtureDataExtract {
 		List<Fixture> result = new ArrayList<Fixture>();
 
 		LOGGER.info("Define path for " + league.getName() + ":" + league.getScoresUrl());
-		//footballDataRestClient.path(null);
-		footballDataRestClient.path(league.getScoresUrl()).accept(MediaType.APPLICATION_JSON_TYPE);
+		// footballDataRestClient.path(null);
+		footballDataRestClient.reset().path(league.getScoresUrl()).accept(MediaType.APPLICATION_JSON_TYPE);
 		footballDataRestClient.query("timeFrameStart", timeFrame);
 		footballDataRestClient.query("timeFrameEnd", timeFrame);
 		try {
+			LOGGER.info("Executing rest client invokation for: " + footballDataRestClient.getBaseURI()
+					+ footballDataRestClient.getBaseURI().getPath());
 			FixturesCollection fixturesCollection = footballDataRestClient.get(FixturesCollection.class);
 
 			List<Fixture> fixturesList = fixturesCollection.getFixtures();

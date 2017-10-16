@@ -35,7 +35,7 @@
 	<!-- </jaxrs:client> -->
 
 	<bean id="footballDataRestClient" class="org.apache.cxf.jaxrs.client.WebClient"
-		factory-method="create" scope="prototype">
+		factory-method="create">
 		<constructor-arg type="java.lang.String"
 			value="http://www.football-data.org/v1" />
 		<constructor-arg ref="webClientProviders" />
