@@ -12,7 +12,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
 	<import resource="classpath:rest-client-config.xml" />
 	<import resource="classpath:persistence-layer-application-context.xml" />
-	<import resource="classpath:selenium-chrome-config.xml"/>
+	<import resource="classpath:selenium-phantomjs-config.xml"/>
 
 
 		<bean id="oddsExtract"

@@ -13,7 +13,7 @@ import org.apache.log4j.net.TelnetAppender;
  * @author aricciardiello
  *
  */
-public class Generator {
+public class Generator2 {
 	public static int COUNTER = 0;
 
 	// http://www.vincicasa.it/estrazioni/archivio-concorsi
@@ -23,6 +23,8 @@ public class Generator {
 
 	public static void main(String[] args) {
 		boolean contains = false;
+		do {
+			COUNTER++;
 			int numeri[] = new int[5];
 			int numero;
 			StringBuilder combinazione = new StringBuilder();
@@ -40,11 +42,17 @@ public class Generator {
 			System.out.print(combinazione.toString().trim());
 			Set estrazioni = getEstrazioni();
 
+			if (COUNTER > 744475) {
 				contains = estrazioni.contains(combinazione.toString().trim());
 				if (contains) {
+					System.out.println("Tentativo: " + COUNTER);
 					System.out.println(contains);
 					System.out.println(combinazione.toString().trim());
 				}
+			}
+
+		} while (!contains);
+
 	}
 
 	public static Set getEstrazioni() {
