@@ -3,18 +3,14 @@
  */
 package local.projects.betting;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import org.apache.log4j.net.TelnetAppender;
-
-/**
- * @author aricciardiello
- *
- */
 public class Generator {
-	public static int COUNTER = 0;
+	public static int CONTATORE = 0;
+
+	public static Boolean IS_PROVIDED = false;
 
 	// http://www.vincicasa.it/estrazioni/archivio-concorsi
 	/**
@@ -22,33 +18,78 @@ public class Generator {
 	 */
 
 	public static void main(String[] args) {
-		boolean contains = false;
-			int numeri[] = new int[5];
-			int numero;
-			StringBuilder combinazione = new StringBuilder();
+		ArrayList<String> winningList = getWinningList();
+		List<ArrayList<Integer>> listOfWinningList = new ArrayList<ArrayList<Integer>>();
 
-			for (int i = 0; i < 5; i++) {
-				numero = (int) (Math.random() * 40);
-				if (numero == 0) {
-					numero++;
-				} else {
-					numeri[i] = numero;
-					combinazione.append(numero + " ");
-				}
+		List<ArrayList<Integer>> convertedAndSortedWinning = convertAndSortWinningList(winningList);
+		boolean exit = false;
+		do {
+			// Generate winning combination
+			ArrayList<Integer> winningCombination = generateNumber();
+
+			// check if winning combination has been extracted
+			boolean hasBeenExtracted = convertedAndSortedWinning.contains(winningCombination);
+
+			if (hasBeenExtracted) {
+				System.out.println("Tentativo: " + CONTATORE + "\t" + winningCombination.toString().trim());
+				exit = true;
+			} else {
+				System.out.println("Non hai vinto : " + winningCombination.toString().trim());
 			}
+		} while (!exit);
 
-			System.out.print(combinazione.toString().trim());
-			Set estrazioni = getEstrazioni();
-
-				contains = estrazioni.contains(combinazione.toString().trim());
-				if (contains) {
-					System.out.println(contains);
-					System.out.println(combinazione.toString().trim());
-				}
 	}
 
-	public static Set getEstrazioni() {
-		Set<String> estrazioni = new HashSet<String>();
+	private static List<ArrayList<Integer>> convertAndSortWinningList(ArrayList<String> winningList) {
+		List<ArrayList<Integer>> convertedAndSortedWinningList = new ArrayList<ArrayList<Integer>>();
+
+		for (String winning : winningList) {
+			ArrayList<Integer> winningCombination = new ArrayList<Integer>();
+			String[] estrazioneSplit = winning.split("\\s+");
+			for (int i = 0; i < estrazioneSplit.length; i++) {
+				winningCombination.add(new Integer(estrazioneSplit[i]));
+			}
+
+			Collections.sort(winningCombination);
+			convertedAndSortedWinningList.add(winningCombination);
+		}
+		return convertedAndSortedWinningList;
+	}
+
+	private static ArrayList<Integer> generateNumber() {
+		CONTATORE++;
+		ArrayList<Integer> combinazione = new ArrayList<Integer>();
+
+		if (!IS_PROVIDED) {
+			if (CONTATORE <= 1000000) {
+				int i = 0;
+				while(i < 5){
+					int numero = (int) (Math.random() * 40);
+					if (numero == 0) {
+						continue;
+					} else {
+						if (combinazione.contains(numero)) {
+							continue;
+						} else {
+							combinazione.add(new Integer(numero));
+							i++;
+						}
+					}
+				}
+			}
+		} else {
+			 combinazione.add(6);
+			 combinazione.add(14);
+			 combinazione.add(19);
+			 combinazione.add(21);
+			 combinazione.add(17);
+		}
+		Collections.sort(combinazione);
+		return combinazione;
+	}
+
+	public static ArrayList<String> getWinningList() {
+		ArrayList<String> estrazioni = new ArrayList<String>();
 
 		estrazioni.add("2 9 20 28 31");
 		estrazioni.add("3 19 24 27 28");
@@ -189,8 +230,375 @@ public class Generator {
 		estrazioni.add("7 15 20 34 39");
 		estrazioni.add("2 13 19 21 35");
 		estrazioni.add("9 15 32 39 40");
-
+		estrazioni.add("2 9 20 28 31");
+		estrazioni.add("3 19 24 27 28");
+		estrazioni.add("12 15 16 23 38");
+		estrazioni.add("1 6 10 14 22");
+		estrazioni.add("1 2 7 29 30");
+		estrazioni.add("3 7 22 31 36");
+		estrazioni.add("12 13 23 35 40");
+		estrazioni.add("9 12 15 19 25");
+		estrazioni.add("7 13 30 33 39");
+		estrazioni.add("3 5 6 20 28");
+		estrazioni.add("9 20 21 22 39");
+		estrazioni.add("23 26 33 34 38");
+		estrazioni.add("9 11 17 26 30");
+		estrazioni.add("2 5 8 16 27");
+		estrazioni.add("7 11 18 24 30");
+		estrazioni.add("6 15 19 20 32");
+		estrazioni.add("5 22 26 30 38");
+		estrazioni.add("10 14 17 28 39");
+		estrazioni.add("11 19 21 26 29");
+		estrazioni.add("16 17 30 31 35");
+		estrazioni.add("4 13 26 35 39");
+		estrazioni.add("3 12 19 34 38");
+		estrazioni.add("2 6 33 34 38");
+		estrazioni.add("2 3 11 15 23");
+		estrazioni.add("3 5 7 16 33");
+		estrazioni.add("4 13 23 32 36");
+		estrazioni.add("7 22 28 39 40");
+		estrazioni.add("3 11 18 23 28");
+		estrazioni.add("12 16 20 31 32");
+		estrazioni.add("10 12 23 37 39");
+		estrazioni.add("3 15 19 26 31");
+		estrazioni.add("3 4 14 18 37");
+		estrazioni.add("5 14 19 22 40");
+		estrazioni.add("22 24 26 31 35");
+		estrazioni.add("7 22 26 32 33");
+		estrazioni.add("21 29 30 32 40");
+		estrazioni.add("21 22 25 32 34");
+		estrazioni.add("3 6 27 36 38");
+		estrazioni.add("15 29 31 38 40");
+		estrazioni.add("4 17 22 27 30");
+		estrazioni.add("7 10 17 22 36");
+		estrazioni.add("9 14 17 21 32");
+		estrazioni.add("1 11 17 19 23");
+		estrazioni.add("1 5 8 14 39");
+		estrazioni.add("11 17 21 30 40");
+		estrazioni.add("9 12 18 27 37");
+		estrazioni.add("6 9 10 21 22");
+		estrazioni.add("17 26 27 30 36");
+		estrazioni.add("11 13 19 25 38");
+		estrazioni.add("13 26 28 32 35");
+		estrazioni.add("1 2 22 28 34");
+		estrazioni.add("6 15 19 31 35");
+		estrazioni.add("20 27 33 35 37");
+		estrazioni.add("5 11 14 20 38");
+		estrazioni.add("9 12 24 27 35");
+		estrazioni.add("9 18 19 23 27");
+		estrazioni.add("5 16 21 29 40");
+		estrazioni.add("2 8 12 37 39");
+		estrazioni.add("22 23 25 30 33");
+		estrazioni.add("1 2 17 19 37");
+		estrazioni.add("18 19 28 29 37");
+		estrazioni.add("4 17 25 26 40");
+		estrazioni.add("5 9 21 28 37");
+		estrazioni.add("8 15 19 26 34");
+		estrazioni.add("2 6 10 32 34");
+		estrazioni.add("5 8 21 25 31");
+		estrazioni.add("1 2 8 9 17");
+		estrazioni.add("4 24 29 31 39");
+		estrazioni.add("14 19 25 26 34");
+		estrazioni.add("8 10 11 15 24");
+		estrazioni.add("7 11 23 29 40");
+		estrazioni.add("2 13 28 34 39");
+		estrazioni.add("2 3 7 11 33");
+		estrazioni.add("12 15 19 21 32");
+		estrazioni.add("13 15 17 23 24");
+		estrazioni.add("9 11 15 21 34");
+		estrazioni.add("1 4 7 30 40");
+		estrazioni.add("9 26 29 31 32");
+		estrazioni.add("3 12 17 26 33");
+		estrazioni.add("6 14 22 33 36");
+		estrazioni.add("1 5 10 13 39");
+		estrazioni.add("12 14 18 19 33");
+		estrazioni.add("9 13 31 38 40");
+		estrazioni.add("11 14 17 27 40");
+		estrazioni.add("7 9 10 22 34");
+		estrazioni.add("22 23 28 29 30");
+		estrazioni.add("6 15 28 31 34");
+		estrazioni.add("7 11 25 26 37");
+		estrazioni.add("12 15 16 18 33");
+		estrazioni.add("15 18 31 34 35");
+		estrazioni.add("7 23 32 34 37");
+		estrazioni.add("9 13 32 37 40");
+		estrazioni.add("5 27 28 31 39");
+		estrazioni.add("5 22 27 32 39");
+		estrazioni.add("14 15 25 29 37");
+		estrazioni.add("3 6 7 29 39");
+		estrazioni.add("11 12 25 34 38");
+		estrazioni.add("13 14 16 30 32");
+		estrazioni.add("6 11 12 21 24");
+		estrazioni.add("8 23 30 35 38");
+		estrazioni.add("6 15 23 37 38");
+		estrazioni.add("5 11 18 25 37");
+		estrazioni.add("9 18 22 23 34");
+		estrazioni.add("5 7 13 25 35");
+		estrazioni.add("4 25 27 32 35");
+		estrazioni.add("7 26 28 36 40");
+		estrazioni.add("3 10 25 26 31");
+		estrazioni.add("16 18 23 24 38");
+		estrazioni.add("6 9 12 22 39");
+		estrazioni.add("4 5 28 33 35");
+		estrazioni.add("2 4 18 19 29");
+		estrazioni.add("6 9 19 34 36");
+		estrazioni.add("3 4 17 19 23");
+		estrazioni.add("3 8 16 24 36");
+		estrazioni.add("1 14 15 31 32");
+		estrazioni.add("14 23 28 29 33");
+		estrazioni.add("10 17 29 37 39");
+		estrazioni.add("1 6 21 24 40");
+		estrazioni.add("10 24 27 29 40");
+		estrazioni.add("9 16 29 32 37");
+		estrazioni.add("1 8 16 22 37");
+		estrazioni.add("6 13 14 17 21");
+		estrazioni.add("1 8 10 18 36");
+		estrazioni.add("5 17 20 29 39");
+		estrazioni.add("3 12 22 23 33");
+		estrazioni.add("5 7 10 18 28");
+		estrazioni.add("13 18 28 35 40");
+		estrazioni.add("13 16 19 29 38");
+		estrazioni.add("12 21 25 33 38");
+		estrazioni.add("9 10 13 15 26");
+		estrazioni.add("7 10 12 13 20");
+		estrazioni.add("4 33 36 39 40");
+		estrazioni.add("2 4 6 17 26");
+		estrazioni.add("5 18 29 30 31");
+		estrazioni.add("17 25 27 29 32");
+		estrazioni.add("3 11 15 18 23");
+		estrazioni.add("7 15 20 34 39");
+		estrazioni.add("2 13 19 21 35");
+		estrazioni.add("9 15 32 39 40");
+		estrazioni.add("2 9 20 28 31");
+		estrazioni.add("3 19 24 27 28");
+		estrazioni.add("12 15 16 23 38");
+		estrazioni.add("1 6 10 14 22");
+		estrazioni.add("1 2 7 29 30");
+		estrazioni.add("3 7 22 31 36");
+		estrazioni.add("12 13 23 35 40");
+		estrazioni.add("9 12 15 19 25");
+		estrazioni.add("7 13 30 33 39");
+		estrazioni.add("3 5 6 20 28");
+		estrazioni.add("9 20 21 22 39");
+		estrazioni.add("23 26 33 34 38");
+		estrazioni.add("9 11 17 26 30");
+		estrazioni.add("2 5 8 16 27");
+		estrazioni.add("7 11 18 24 30");
+		estrazioni.add("6 15 19 20 32");
+		estrazioni.add("5 22 26 30 38");
+		estrazioni.add("10 14 17 28 39");
+		estrazioni.add("11 19 21 26 29");
+		estrazioni.add("16 17 30 31 35");
+		estrazioni.add("4 13 26 35 39");
+		estrazioni.add("3 12 19 34 38");
+		estrazioni.add("2 6 33 34 38");
+		estrazioni.add("2 3 11 15 23");
+		estrazioni.add("3 5 7 16 33");
+		estrazioni.add("4 13 23 32 36");
+		estrazioni.add("7 22 28 39 40");
+		estrazioni.add("3 11 18 23 28");
+		estrazioni.add("12 16 20 31 32");
+		estrazioni.add("10 12 23 37 39");
+		estrazioni.add("3 15 19 26 31");
+		estrazioni.add("3 4 14 18 37");
+		estrazioni.add("5 14 19 22 40");
+		estrazioni.add("22 24 26 31 35");
+		estrazioni.add("7 22 26 32 33");
+		estrazioni.add("21 29 30 32 40");
+		estrazioni.add("21 22 25 32 34");
+		estrazioni.add("3 6 27 36 38");
+		estrazioni.add("15 29 31 38 40");
+		estrazioni.add("4 17 22 27 30");
+		estrazioni.add("7 10 17 22 36");
+		estrazioni.add("9 14 17 21 32");
+		estrazioni.add("1 11 17 19 23");
+		estrazioni.add("1 5 8 14 39");
+		estrazioni.add("11 17 21 30 40");
+		estrazioni.add("9 12 18 27 37");
+		estrazioni.add("6 9 10 21 22");
+		estrazioni.add("17 26 27 30 36");
+		estrazioni.add("11 13 19 25 38");
+		estrazioni.add("13 26 28 32 35");
+		estrazioni.add("1 2 22 28 34");
+		estrazioni.add("6 15 19 31 35");
+		estrazioni.add("20 27 33 35 37");
+		estrazioni.add("5 11 14 20 38");
+		estrazioni.add("9 12 24 27 35");
+		estrazioni.add("9 18 19 23 27");
+		estrazioni.add("5 16 21 29 40");
+		estrazioni.add("2 8 12 37 39");
+		estrazioni.add("22 23 25 30 33");
+		estrazioni.add("1 2 17 19 37");
+		estrazioni.add("18 19 28 29 37");
+		estrazioni.add("4 17 25 26 40");
+		estrazioni.add("5 9 21 28 37");
+		estrazioni.add("8 15 19 26 34");
+		estrazioni.add("2 6 10 32 34");
+		estrazioni.add("5 8 21 25 31");
+		estrazioni.add("1 2 8 9 17");
+		estrazioni.add("4 24 29 31 39");
+		estrazioni.add("14 19 25 26 34");
+		estrazioni.add("8 10 11 15 24");
+		estrazioni.add("7 11 23 29 40");
+		estrazioni.add("2 13 28 34 39");
+		estrazioni.add("2 3 7 11 33");
+		estrazioni.add("12 15 19 21 32");
+		estrazioni.add("13 15 17 23 24");
+		estrazioni.add("9 11 15 21 34");
+		estrazioni.add("1 4 7 30 40");
+		estrazioni.add("9 26 29 31 32");
+		estrazioni.add("3 12 17 26 33");
+		estrazioni.add("6 14 22 33 36");
+		estrazioni.add("1 5 10 13 39");
+		estrazioni.add("12 14 18 19 33");
+		estrazioni.add("9 13 31 38 40");
+		estrazioni.add("11 14 17 27 40");
+		estrazioni.add("7 9 10 22 34");
+		estrazioni.add("22 23 28 29 30");
+		estrazioni.add("6 15 28 31 34");
+		estrazioni.add("7 11 25 26 37");
+		estrazioni.add("12 15 16 18 33");
+		estrazioni.add("15 18 31 34 35");
+		estrazioni.add("7 23 32 34 37");
+		estrazioni.add("9 13 32 37 40");
+		estrazioni.add("5 27 28 31 39");
+		estrazioni.add("5 22 27 32 39");
+		estrazioni.add("14 15 25 29 37");
+		estrazioni.add("3 6 7 29 39");
+		estrazioni.add("11 12 25 34 38");
+		estrazioni.add("13 14 16 30 32");
+		estrazioni.add("6 11 12 21 24");
+		estrazioni.add("8 23 30 35 38");
+		estrazioni.add("6 15 23 37 38");
+		estrazioni.add("5 11 18 25 37");
+		estrazioni.add("9 18 22 23 34");
+		estrazioni.add("5 7 13 25 35");
+		estrazioni.add("4 25 27 32 35");
+		estrazioni.add("7 26 28 36 40");
+		estrazioni.add("3 10 25 26 31");
+		estrazioni.add("16 18 23 24 38");
+		estrazioni.add("6 9 12 22 39");
+		estrazioni.add("4 5 28 33 35");
+		estrazioni.add("2 4 18 19 29");
+		estrazioni.add("6 9 19 34 36");
+		estrazioni.add("3 4 17 19 23");
+		estrazioni.add("3 8 16 24 36");
+		estrazioni.add("1 14 15 31 32");
+		estrazioni.add("14 23 28 29 33");
+		estrazioni.add("10 17 29 37 39");
+		estrazioni.add("1 6 21 24 40");
+		estrazioni.add("10 24 27 29 40");
+		estrazioni.add("9 16 29 32 37");
+		estrazioni.add("1 8 16 22 37");
+		estrazioni.add("6 13 14 17 21");
+		estrazioni.add("1 8 10 18 36");
+		estrazioni.add("5 17 20 29 39");
+		estrazioni.add("3 12 22 23 33");
+		estrazioni.add("5 7 10 18 28");
+		estrazioni.add("13 18 28 35 40");
+		estrazioni.add("13 16 19 29 38");
+		estrazioni.add("12 21 25 33 38");
+		estrazioni.add("9 10 13 15 26");
+		estrazioni.add("7 10 12 13 20");
+		estrazioni.add("4 33 36 39 40");
+		estrazioni.add("2 4 6 17 26");
+		estrazioni.add("5 18 29 30 31");
+		estrazioni.add("17 25 27 29 32");
+		estrazioni.add("3 11 15 18 23");
+		estrazioni.add("7 15 20 34 39");
+		estrazioni.add("2 13 19 21 35");
+		estrazioni.add("9 15 32 39 40");
+		estrazioni.add("1 3 10 22 37");
+		estrazioni.add("1 6 12 13 40");
+		estrazioni.add("1 2 20 26 34");
+		estrazioni.add("11 17 20 27 39");
+		estrazioni.add("7 13 14 27 36");
+		estrazioni.add("17 18 29 39 40");
+		estrazioni.add("15 20 21 23 27");
+		estrazioni.add("4 5 16 31 40");
+		estrazioni.add("4 20 28 35 38");
+		estrazioni.add("2 10 34 35 36");
+		estrazioni.add("15 21 22 32 3");
+		estrazioni.add("9 14 27 34 35");
+		estrazioni.add("6 13 22 29 32");
+		estrazioni.add("9 10 20 31 36");
+		estrazioni.add("8 9 27 35 36");
+		estrazioni.add("7 8 13 15 26");
+		estrazioni.add("5 8 13 29 31");
+		estrazioni.add("8 16 21 26 34");
+		estrazioni.add("4 9 28 31 40 ");
+		estrazioni.add("25 32 35 36 3");
+		estrazioni.add("3 13 15 20 30");
+		estrazioni.add("14 21 24 28 3");
+		estrazioni.add("7 21 22 35 37");
+		estrazioni.add("6 7 13 15 36 ");
+		estrazioni.add("4 14 15 38 39");
+		estrazioni.add("1 2 3 14 33");
+		estrazioni.add("5 16 22 24 34");
+		estrazioni.add("1 10 17 33 39");
+		estrazioni.add("9 26 28 37 38");
+		estrazioni.add("10 13 14 25 3");
+		estrazioni.add("2 3 24 28 38");
+		estrazioni.add("2 4 13 24 27");
+		estrazioni.add("7 14 30 37 40");
+		estrazioni.add("11 18 20 27 3");
+		estrazioni.add("7 8 12 30 38");
+		estrazioni.add("1 2 5 18 32");
+		estrazioni.add("6 21 23 29 31");
+		estrazioni.add("11 26 27 35 4");
+		estrazioni.add("8 26 28 31 35");
+		estrazioni.add("4 5 17 19 24");
+		estrazioni.add("7 9 15 22 32");
+		estrazioni.add("17 25 28 31 3");
+		estrazioni.add("4 19 26 32 38");
+		estrazioni.add("15 18 24 26 2");
+		estrazioni.add("4 18 21 37 40");
+		estrazioni.add("6 7 16 26 28");
+		estrazioni.add("3 7 8 26 36");
+		estrazioni.add("7 8 22 24 36");
+		estrazioni.add("9 12 14 28 38");
+		estrazioni.add("4 7 19 22 23");
+		estrazioni.add("8 11 13 24 26");
+		estrazioni.add("19 21 22 30 3");
+		estrazioni.add("10 15 16 17 2");
+		estrazioni.add("4 7 25 27 31");
+		estrazioni.add("1 2 9 14 16");
+		estrazioni.add("11 21 27 30 3");
+		estrazioni.add("3 16 25 34 35");
+		estrazioni.add("7 11 24 27 38");
+		estrazioni.add("4 22 26 27 31");
+		estrazioni.add("10 20 30 34 3");
+		estrazioni.add("10 20 22 30 4");
+		estrazioni.add("1 19 28 36 39");
+		estrazioni.add("4 15 25 31 34");
+		estrazioni.add("4 12 15 33 36");
+		estrazioni.add("1 21 27 36 39");
+		estrazioni.add("26 31 32 34 39");
+		estrazioni.add("14 19 20 30 3");
+		estrazioni.add("3 9 24 33 38");
+		estrazioni.add("1 10 12 14 16");
+		estrazioni.add("7 14 23 28 40");
+		estrazioni.add("2 7 10 15 40");
+		estrazioni.add("3 4 11 15 23");
+		estrazioni.add("2 25 28 32 36");
+		estrazioni.add("4 13 16 21 33");
+		estrazioni.add("6 11 13 20 29");
+		estrazioni.add("5 14 15 26 36");
+		estrazioni.add("5 15 19 21 36");
+		estrazioni.add("1 15 21 28 37");
+		estrazioni.add("13 25 27 31 39");
+		estrazioni.add("2 18 22 25 27");
+		estrazioni.add("2 3 6 28 38");
+		estrazioni.add("3 14 16 25 34");
+		estrazioni.add("4 10 12 21 36");
+		estrazioni.add("17 22 23 29 30");
+		estrazioni.add("10 21 26 27 38");
+		estrazioni.add("10 22 27 31 33");
+		estrazioni.add("10 16 19 32 33");
+		estrazioni.add("1 3 7 32 37");
+		estrazioni.add("2 4 10 11 21");
+		estrazioni.add("2 13 32 38 39");
+		estrazioni.add("2 3 9 11 27");
 		return estrazioni;
 	}
-
 }
